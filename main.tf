@@ -10,6 +10,14 @@ variable "aws_secret_access_key" {
 }
 
 terraform {
+  cloud {
+    organization = "bacchus-snu"
+
+    workspaces {
+      name = "infra"
+    }
+  }
+
   required_providers {
     aws = {
       source  = "hashicorp/aws"
