@@ -7,6 +7,8 @@ module "default_vpc" {
   manage_default_vpc               = true
   default_vpc_name                 = "default"
   default_vpc_enable_dns_hostnames = true
+
+  enable_nat_gateway = true
 }
 
 resource "aws_default_subnet" "default" {
