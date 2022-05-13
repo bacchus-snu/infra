@@ -1,22 +1,15 @@
-module "default_vpc" {
+module "vpc_bacchus_dev" {
   source  = "terraform-aws-modules/vpc/aws"
   version = "3.13.0"
 
-  create_vpc = false
+  name = "bacchus-dev"
+  cidr = "10.0.0.0/16"
 
-  manage_default_vpc               = true
-  default_vpc_name                 = "default"
-  default_vpc_enable_dns_hostnames = true
+  azs             = ["ap-northeast-2a", "ap-northeast-2b", "ap-northeast-2c", "ap-northeast-2d"]
+  private_subnets = ["10.0.0.0/19", "10.0.32.0/19", "10.0.64.0/19", "10.0.96.0/19"]
+  public_subnets  = ["10.0.128.0/19", "10.0.160.0/19", "10.0.192.0/19", "10.0.224.0/19"]
 
-  enable_nat_gateway = true
-}
-
-resource "aws_default_subnet" "default" {
-  for_each = toset(["ap-northeast-2a", "ap-northeast-2b", "ap-northeast-2c", "ap-northeast-2d"])
-
-  availability_zone = each.key
-
-  lifecycle {
-    ignore_changes = [tags]
-  }
+  enable_nat_gateway   = true
+  single_nat_gateway   = true
+  enable_dns_hostnames = true
 }

@@ -21,8 +21,8 @@ module "eks_bacchus_dev" {
     }
   }
 
-  vpc_id     = module.default_vpc.default_vpc_id
-  subnet_ids = [for subnet in aws_default_subnet.default : subnet.id]
+  vpc_id     = module.vpc_bacchus_dev.vpc_id
+  subnet_ids = module.vpc_bacchus_dev.private_subnets
 
   cluster_enabled_log_types = []
 
