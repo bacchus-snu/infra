@@ -1,14 +1,3 @@
-variable "aws_access_key_id" {
-  description = "Access Key ID"
-  type        = string
-}
-
-variable "aws_secret_access_key" {
-  description = "Secret Access Key"
-  type        = string
-  sensitive   = true
-}
-
 terraform {
   cloud {
     organization = "bacchus-snu"
@@ -29,7 +18,5 @@ terraform {
 }
 
 provider "aws" {
-  region     = "ap-northeast-2"
-  access_key = var.aws_access_key_id
-  secret_key = var.aws_secret_access_key
+  region = "ap-northeast-2"
 }
