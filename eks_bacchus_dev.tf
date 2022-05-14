@@ -1,6 +1,25 @@
+# https://github.com/terraform-aws-modules/terraform-aws-eks/issues/2009#issuecomment-1096628912
+provider "kubernetes" {
+  alias = "bacchus_dev"
+
+  host                   = module.eks_bacchus_dev.cluster_endpoint
+  cluster_ca_certificate = base64decode(module.eks_bacchus_dev.cluster_certificate_authority_data)
+
+  exec {
+    api_version = "client.authentication.k8s.io/v1alpha1"
+    command     = "aws"
+    # This requires the awscli to be installed locally where Terraform is executed
+    args = ["eks", "get-token", "--cluster-name", module.eks_bacchus_dev.cluster_id]
+  }
+}
+
 module "eks_bacchus_dev" {
   source  = "terraform-aws-modules/eks/aws"
   version = "~> 18.20"
+
+  providers = {
+    kubernetes = kubernetes.bacchus_dev
+  }
 
   cluster_name                    = "bacchus-dev"
   cluster_version                 = "1.22"
@@ -86,17 +105,4 @@ module "eks_bacchus_dev" {
     username = username,
     groups   = ["system:masters"]
   }]
-}
-
-# https://github.com/terraform-aws-modules/terraform-aws-eks/issues/2009#issuecomment-1096628912
-provider "kubernetes" {
-  host                   = module.eks_bacchus_dev.cluster_endpoint
-  cluster_ca_certificate = base64decode(module.eks_bacchus_dev.cluster_certificate_authority_data)
-
-  exec {
-    api_version = "client.authentication.k8s.io/v1alpha1"
-    command     = "aws"
-    # This requires the awscli to be installed locally where Terraform is executed
-    args = ["eks", "get-token", "--cluster-name", module.eks_bacchus_dev.cluster_id]
-  }
 }
