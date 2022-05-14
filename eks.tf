@@ -81,14 +81,11 @@ module "eks_bacchus_dev" {
 
   manage_aws_auth_configmap = true
 
-  # TODO: do this for each admin user
-  aws_auth_users = [
-    {
-      userarn  = "arn:aws:iam::642254835236:user/tirr",
-      username = "tirr",
-      groups   = ["system:masters"]
-    }
-  ]
+  aws_auth_users = [for username in aws_iam_group_membership.bacchus_admin.users : {
+    userarn  = aws_iam_user.bacchus[username].arn,
+    username = username,
+    groups   = ["system:masters"]
+  }]
 }
 
 # https://github.com/terraform-aws-modules/terraform-aws-eks/issues/2009#issuecomment-1096628912
