@@ -81,7 +81,7 @@ module "eks_bacchus_prod" {
 
   eks_managed_node_group_defaults = {
     ami_type       = "AL2_x86_64"
-    instance_types = ["t3a.medium", "t3.medium"]
+    instance_types = ["t3.medium"]
     iam_role_additional_policies = [
       "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly",
     ]
