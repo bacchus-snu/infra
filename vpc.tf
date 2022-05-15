@@ -49,6 +49,9 @@ resource "aws_security_group_rule" "wireguard_with_ssh_egress" {
   protocol  = "all"
   from_port = 0
   to_port   = 0
+
+  cidr_blocks     = ["0.0.0.0/0"]
+  ipv6_cidr_blocks = ["::/0"]
 }
 
 resource "aws_security_group_rule" "wireguard_with_ssh_ingress" {
@@ -60,4 +63,7 @@ resource "aws_security_group_rule" "wireguard_with_ssh_ingress" {
   protocol  = each.value[0]
   from_port = each.value[1]
   to_port   = each.value[1]
+
+  cidr_blocks     = ["0.0.0.0/0"]
+  ipv6_cidr_blocks = ["::/0"]
 }
