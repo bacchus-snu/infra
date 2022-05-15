@@ -31,6 +31,9 @@ module "vpc_bacchus_dev" {
 }
 
 resource "aws_default_vpc" "bacchus" {
+  tags = {
+    Name = "default"
+  }
 }
 
 resource "aws_security_group" "wireguard_with_ssh" {
