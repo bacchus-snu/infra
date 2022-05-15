@@ -29,3 +29,32 @@ module "vpc_bacchus_dev" {
   single_nat_gateway   = true
   enable_dns_hostnames = true
 }
+
+resource "aws_default_vpc" "bacchus" {
+}
+
+resource "aws_security_group" "wireguard_with_ssh" {
+  name        = "wireguard_with_ssh"
+  description = "Allow SSH and WireGuard traffic"
+  vpc_id      = aws_default_vpc.bacchus.id
+}
+
+resource "aws_security_group_rule" "wireguard_with_ssh_egress" {
+  security_group_id = aws_security_group.wireguard_with_ssh.id
+
+  type      = "egress"
+  protocol  = "all"
+  from_port = 0
+  to_port   = 0
+}
+
+resource "aws_security_group_rule" "wireguard_with_ssh_ingress" {
+  for_each = { for spec in [["tcp", 22], ["udp", 51820]] : "${spec[0]}-${spec[1]}" => spec }
+
+  security_group_id = aws_security_group.wireguard_with_ssh.id
+
+  type      = "ingress"
+  protocol  = each.value[0]
+  from_port = each.value[1]
+  to_port   = each.value[1]
+}
