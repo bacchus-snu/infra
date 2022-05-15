@@ -8,6 +8,7 @@ packages:
 users:
 - name: bacchus
   gecos: 'Bacchus'
+  shell: '/bin/bash'
   sudo: 'ALL=(ALL) NOPASSWD:ALL'
   lock_passwd: true
   ssh_authorized_keys:
