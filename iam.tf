@@ -1,11 +1,31 @@
 locals {
-  admin_users = [
-    "tirr",
-    "ryul99",
-    "cseteram",
-    "skystar",
-    "terraform-cloud",
-  ]
+  users = {
+    "tirr" = {
+      pgp_key         = "keybase:vbchunguk",
+      is_admin        = true,
+      console_enabled = true,
+    },
+    "ryul99" = {
+      pgp_key         = "keybase:ryul_99",
+      is_admin        = true,
+      console_enabled = true,
+    },
+    "cseteram" = {
+      pgp_key         = "keybase:cseteram",
+      is_admin        = true,
+      console_enabled = true,
+    },
+    "skystar" = {
+      pgp_key         = "keybase:skystar",
+      is_admin        = true,
+      console_enabled = true,
+    },
+    "terraform-cloud" = {
+      pgp_key         = "",
+      is_admin        = true,
+      console_enabled = false,
+    },
+  }
 }
 
 data "aws_iam_policy" "administrator_access" {
@@ -13,10 +33,40 @@ data "aws_iam_policy" "administrator_access" {
 }
 
 resource "aws_iam_user" "bacchus" {
-  for_each = toset(local.admin_users)
+  for_each = local.users
 
   name = each.key
   path = "/"
+}
+
+resource "aws_iam_user_login_profile" "bacchus" {
+  for_each = { for user, data in local.users : user => data["pgp_key"] if data["console_enabled"] }
+
+  user    = each.key
+  pgp_key = each.value == "" ? null : each.value
+
+  password_reset_required = true
+
+  lifecycle {
+    ignore_changes = [
+      pgp_key,
+      password_length,
+      password_reset_required,
+    ]
+  }
+}
+
+resource "aws_iam_access_key" "bacchus" {
+  for_each = { for user, data in local.users : user => data["pgp_key"] }
+
+  user    = each.key
+  pgp_key = each.value == "" ? null : each.value
+
+  lifecycle {
+    ignore_changes = [
+      pgp_key,
+    ]
+  }
 }
 
 resource "aws_iam_group" "bacchus_admin" {
@@ -33,5 +83,5 @@ resource "aws_iam_group_membership" "bacchus_admin" {
   name = "bacchus_admin_membership"
 
   group = aws_iam_group.bacchus_admin.name
-  users = local.admin_users
+  users = [for user, data in local.users : user if data["is_admin"]]
 }
