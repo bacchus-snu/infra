@@ -24,7 +24,7 @@ data "aws_ami" "debian_bullseye" {
   }
 }
 
-resource "aws_instance" "bacchus_vpn" {
+resource "aws_instance" "bacchus_vpn_kr" {
   ami           = data.aws_ami.debian_bullseye.id
   instance_type = "t3a.micro"
 
@@ -39,7 +39,17 @@ resource "aws_instance" "bacchus_vpn" {
   }
 }
 
-resource "aws_eip" "bacchus_vpn" {
-  instance = aws_instance.bacchus_vpn.id
+resource "aws_eip" "bacchus_vpn_kr" {
+  instance = aws_instance.bacchus_vpn_kr.id
   vpc      = true
+}
+
+moved {
+  from = aws_instance.bacchus_vpn
+  to   = aws_instance.bacchus_vpn_kr
+}
+
+moved {
+  from = aws_eip.bacchus_vpn
+  to   = aws_eip.bacchus_vpn_kr
 }
