@@ -107,11 +107,10 @@ module "eks_bacchus_dev" {
   }]
 }
 
-resource "aws_iam_policy" "bacchus_dev_eks_lbc_assumerole" {
+resource "aws_iam_role" "bacchus_dev_eks_lbc_assumerole" {
   name = "AmazonEKSLoadBalancerControllerRole"
-  path = "/"
 
-  policy = jsonencode({
+  assume_role_policy = jsonencode({
     "Version": "2012-10-17",
     "Statement": [
       {
