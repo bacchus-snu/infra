@@ -12,6 +12,13 @@ module "vpc_bacchus_prod" {
   enable_nat_gateway   = true
   single_nat_gateway   = true
   enable_dns_hostnames = true
+
+  private_subnet_tags = {
+    "kubernetes.io/role/internal-elb" = "1",
+  }
+  public_subnet_tags = {
+    "kubernetes.io/role/elb" = "1",
+  }
 }
 
 module "vpc_bacchus_dev" {
@@ -28,6 +35,13 @@ module "vpc_bacchus_dev" {
   enable_nat_gateway   = true
   single_nat_gateway   = true
   enable_dns_hostnames = true
+
+  private_subnet_tags = {
+    "kubernetes.io/role/internal-elb" = "1",
+  }
+  public_subnet_tags = {
+    "kubernetes.io/role/elb" = "1",
+  }
 }
 
 resource "aws_default_vpc" "bacchus" {
@@ -50,7 +64,7 @@ resource "aws_security_group_rule" "wireguard_with_ssh_egress" {
   from_port = 0
   to_port   = 0
 
-  cidr_blocks     = ["0.0.0.0/0"]
+  cidr_blocks      = ["0.0.0.0/0"]
   ipv6_cidr_blocks = ["::/0"]
 }
 
@@ -64,6 +78,6 @@ resource "aws_security_group_rule" "wireguard_with_ssh_ingress" {
   from_port = each.value[1]
   to_port   = each.value[1]
 
-  cidr_blocks     = ["0.0.0.0/0"]
+  cidr_blocks      = ["0.0.0.0/0"]
   ipv6_cidr_blocks = ["::/0"]
 }
