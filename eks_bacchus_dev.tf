@@ -106,3 +106,27 @@ module "eks_bacchus_dev" {
     groups   = ["system:masters"]
   }]
 }
+
+resource "aws_iam_policy" "bacchus_dev_eks_lbc_assumerole" {
+  name = "AmazonEKSLoadBalancerControllerRole"
+  path = "/"
+
+  policy = jsonencode({
+    "Version": "2012-10-17",
+    "Statement": [
+      {
+        "Effect": "Allow",
+        "Principal": {
+          "Federated": module.eks_bacchus_dev.oidc_provider_arn
+        },
+        "Action": "sts:AssumeRoleWithWebIdentity",
+        "Condition": {
+          "StringEquals": {
+            "${module.eks_bacchus_dev.oidc_provider}:aud": "sts.amazonaws.com",
+            "${module.eks_bacchus_dev.oidc_provider}:sub": "system:serviceaccount:kube-system:aws-load-balancer-controller"
+          }
+        }
+      }
+    ]
+  })
+}
