@@ -111,21 +111,26 @@ resource "aws_iam_role" "bacchus_dev_eks_lbc_assumerole" {
   name = "BacchusDevEKSLoadBalancerControllerRole"
 
   assume_role_policy = jsonencode({
-    "Version": "2012-10-17",
-    "Statement": [
+    "Version" = "2012-10-17",
+    "Statement" = [
       {
-        "Effect": "Allow",
-        "Principal": {
-          "Federated": module.eks_bacchus_dev.oidc_provider_arn
+        "Effect" = "Allow",
+        "Principal" = {
+          "Federated" = module.eks_bacchus_dev.oidc_provider_arn,
         },
-        "Action": "sts:AssumeRoleWithWebIdentity",
-        "Condition": {
-          "StringEquals": {
-            "${module.eks_bacchus_dev.oidc_provider}:aud": "sts.amazonaws.com",
-            "${module.eks_bacchus_dev.oidc_provider}:sub": "system:serviceaccount:kube-system:aws-load-balancer-controller"
-          }
-        }
-      }
-    ]
+        "Action" = "sts:AssumeRoleWithWebIdentity",
+        "Condition" = {
+          "StringEquals" = {
+            "${module.eks_bacchus_dev.oidc_provider}:aud" = "sts.amazonaws.com",
+            "${module.eks_bacchus_dev.oidc_provider}:sub" = "system:serviceaccount:kube-system:aws-load-balancer-controller",
+          },
+        },
+      },
+    ],
   })
+}
+
+resource "aws_iam_role_policy_attachment" "bacchus_dev_eks_lbc" {
+  role       = aws_iam_role.bacchus_dev_eks_lbc_assumerole.name
+  policy_arn = aws_iam_policy.aws_eks_lbc_policy.arn
 }
