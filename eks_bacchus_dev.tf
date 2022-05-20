@@ -75,6 +75,15 @@ module "eks_bacchus_dev" {
       cidr_blocks      = ["0.0.0.0/0"]
       ipv6_cidr_blocks = ["::/0"]
     }
+    ingress_allow_access_from_control_plane = {
+      description = "Allow access from control plane to webhook port of AWS load balancer controller"
+
+      type                          = "ingress"
+      protocol                      = "tcp"
+      from_port                     = 9443
+      to_port                       = 9443
+      source_cluster_security_group = true
+    }
   }
 
   cluster_enabled_log_types = []
