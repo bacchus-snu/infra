@@ -106,13 +106,3 @@ module "eks_bacchus_dev" {
     groups   = ["system:masters"]
   }]
 }
-
-data "tls_certificate" "bacchus_dev_cluster_oidc_issuer" {
-  url = module.eks_bacchus_dev.cluster_oidc_issuer_url
-}
-
-resource "aws_iam_openid_connect_provider" "default" {
-  url             = module.eks_bacchus_dev.cluster_oidc_issuer_url
-  client_id_list  = ["sts.amazonaws.com"]
-  thumbprint_list = [data.tls_certificate.bacchus_dev_cluster_oidc_issuer.certificates[0].sha1_fingerprint]
-}
