@@ -64,7 +64,6 @@ resource "aws_iam_access_key" "bacchus" {
   for_each = {
     for user in aws_iam_user.bacchus :
     user.name => local.users[user.name]["pgp_key"]
-    if local.users[user.name]["console_enabled"]
   }
 
   user    = each.key
