@@ -90,7 +90,7 @@ resource "aws_iam_group_membership" "bacchus_admin" {
   name = "bacchus_admin_membership"
 
   group = aws_iam_group.bacchus_admin.name
-  users = [for user in aws_iam_user.users : user.name if local.users[user.name]["is_admin"]]
+  users = [for user in aws_iam_user.bacchus : user.name if local.users[user.name]["is_admin"]]
 }
 
 resource "aws_iam_policy" "aws_eks_lbc_policy" {
