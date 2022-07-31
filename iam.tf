@@ -20,6 +20,11 @@ locals {
       is_admin        = true,
       console_enabled = true,
     },
+    "jhuni" = {
+      pgp_key         = "keybase:jhuni",
+      is_admin        = true,
+      console_enabled = true,
+    },
     "terraform-cloud" = {
       pgp_key         = "",
       is_admin        = true,
