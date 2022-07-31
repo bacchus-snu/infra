@@ -39,7 +39,7 @@ resource "aws_instance" "bacchus_vpn_kr" {
   }
   
   lifecycle {
-    ignore_chages = [ami]
+    ignore_changes = [ami]
   }
 }
 
