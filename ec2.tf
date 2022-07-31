@@ -37,6 +37,10 @@ resource "aws_instance" "bacchus_vpn_kr" {
   root_block_device {
     volume_size = 20
   }
+  
+  lifecycle {
+    ignore_chages = [ami]
+  }
 }
 
 resource "aws_eip" "bacchus_vpn_kr" {
