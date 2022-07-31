@@ -10,11 +10,6 @@ locals {
       is_admin        = true,
       console_enabled = true,
     },
-    "cseteram" = {
-      pgp_key         = "keybase:cseteram",
-      is_admin        = true,
-      console_enabled = true,
-    },
     "skystar" = {
       pgp_key         = "keybase:skystar",
       is_admin        = true,
@@ -45,7 +40,11 @@ resource "aws_iam_user" "bacchus" {
 }
 
 resource "aws_iam_user_login_profile" "bacchus" {
-  for_each = { for user, data in local.users : user => data["pgp_key"] if data["console_enabled"] }
+  for_each = {
+    for user in aws_iam_user.bacchus :
+    user.name => local.users[user.name]["pgp_key"]
+    if local.users[user.name]["console_enabled"]
+  }
 
   user    = each.key
   pgp_key = each.value == "" ? null : each.value
@@ -62,7 +61,11 @@ resource "aws_iam_user_login_profile" "bacchus" {
 }
 
 resource "aws_iam_access_key" "bacchus" {
-  for_each = { for user, data in local.users : user => data["pgp_key"] }
+  for_each = {
+    for user in aws_iam_user.bacchus :
+    user.name => local.users[user.name]["pgp_key"]
+    if local.users[user.name]["console_enabled"]
+  }
 
   user    = each.key
   pgp_key = each.value == "" ? null : each.value
