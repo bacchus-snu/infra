@@ -15,6 +15,11 @@ locals {
       is_admin        = true,
       console_enabled = true,
     },
+    "cseteram" = {
+      pgp_key         = "keybase:cseteram",
+      is_admin        = true,
+      console_enabled = true,
+    },
     "jhuni" = {
       pgp_key         = "keybase:jhuni",
       is_admin        = true,
