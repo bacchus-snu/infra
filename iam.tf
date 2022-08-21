@@ -25,6 +25,11 @@ locals {
       is_admin        = true,
       console_enabled = true,
     },
+    "whnbaek" = {
+      pgp_key         = file("./whnbaek.gpg"),
+      is_admin        = true,
+      console_enabled = true,
+    },
     "terraform-cloud" = {
       pgp_key         = "",
       is_admin        = true,
