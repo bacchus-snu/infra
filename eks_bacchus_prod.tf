@@ -106,12 +106,4 @@ module "eks_bacchus_prod" {
       desired_size = 2
     }
   }
-
-  manage_aws_auth_configmap = true
-
-  aws_auth_users = [for username in aws_iam_group_membership.bacchus_admin.users : {
-    userarn  = aws_iam_user.bacchus[username].arn,
-    username = username,
-    groups   = ["system:masters"]
-  }]
 }
