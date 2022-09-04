@@ -32,11 +32,11 @@ module "eks_bartender" {
       resolve_conflicts = "OVERWRITE"
     }
     coredns = {
-      addon_version     = "v1.8.7-eksbuild.1"
+      addon_version     = "v1.8.7-eksbuild.2"
       resolve_conflicts = "OVERWRITE"
     }
     kube-proxy = {
-      addon_version = "v1.22.6-eksbuild.1"
+      addon_version = "v1.23.7-eksbuild.1"
     }
     aws-ebs-csi-driver = {
       addon_version = "v1.10.0-eksbuild.1"
