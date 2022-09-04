@@ -13,6 +13,22 @@ provider "kubernetes" {
   }
 }
 
+provider "helm" {
+  alias = "bartender"
+
+  kubernetes {
+    host                   = module.eks_bartender.cluster_endpoint
+    cluster_ca_certificate = base64decode(module.eks_bartender.cluster_certificate_authority_data)
+
+    exec {
+      api_version = "client.authentication.k8s.io/v1alpha1"
+      command     = "aws"
+      # This requires the awscli to be installed locally where Terraform is executed
+      args = ["eks", "get-token", "--cluster-name", module.eks_bartender.cluster_id]
+    }
+  }
+}
+
 module "eks_bartender" {
   source  = "terraform-aws-modules/eks/aws"
   version = "~> 18.20"
@@ -117,4 +133,53 @@ module "eks_bartender" {
     username = username,
     groups   = ["system:masters"]
   }]
+}
+
+resource "aws_iam_role" "bartender_eks_lbc_assumerole" {
+  name = "BartenderEKSLoadBalancerControllerRole"
+
+  assume_role_policy = jsonencode({
+    "Version" = "2012-10-17",
+    "Statement" = [
+      {
+        "Effect" = "Allow",
+        "Principal" = {
+          "Federated" = module.eks_bartender.oidc_provider_arn,
+        },
+        "Action" = "sts:AssumeRoleWithWebIdentity",
+        "Condition" = {
+          "StringEquals" = {
+            "${module.eks_bartender.oidc_provider}:aud" = "sts.amazonaws.com",
+            "${module.eks_bartender.oidc_provider}:sub" = "system:serviceaccount:kube-system:aws-load-balancer-controller",
+          },
+        },
+      },
+    ],
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "bartender_eks_lbc" {
+  role       = aws_iam_role.bartender_eks_lbc_assumerole.name
+  policy_arn = aws_iam_policy.aws_eks_lbc_policy.arn
+}
+
+resource "helm_release" "aws_load_balancer_controller" {
+  provider = helm.bartender
+
+  name      = "aws-load-balancer-controller"
+  namespace = "kube-system"
+
+  repository = "https://aws.github.io/eks-charts"
+  chart      = "aws-load-balancer-controller"
+  version    = "1.4.4"
+
+  set {
+    name = "clusterName"
+    value = module.eks_bartender.cluster_name
+  }
+
+  set {
+    name = "serviceAccount.annotations.\"eks.amazonaws.com/role-arn\""
+    value = aws_iam_role.bartender_eks_lbc_assumerole.arn
+  }
 }
