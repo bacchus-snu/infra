@@ -6,7 +6,7 @@ provider "kubernetes" {
   cluster_ca_certificate = base64decode(module.eks_bartender.cluster_certificate_authority_data)
 
   exec {
-    api_version = "client.authentication.k8s.io/v1alpha1"
+    api_version = "client.authentication.k8s.io/v1beta1"
     command     = "aws"
     # This requires the awscli to be installed locally where Terraform is executed
     args = ["eks", "get-token", "--cluster-name", module.eks_bartender.cluster_id]
@@ -21,7 +21,7 @@ provider "helm" {
     cluster_ca_certificate = base64decode(module.eks_bartender.cluster_certificate_authority_data)
 
     exec {
-      api_version = "client.authentication.k8s.io/v1alpha1"
+      api_version = "client.authentication.k8s.io/v1beta1"
       command     = "aws"
       # This requires the awscli to be installed locally where Terraform is executed
       args = ["eks", "get-token", "--cluster-name", module.eks_bartender.cluster_id]
@@ -203,6 +203,8 @@ resource "helm_release" "cert_manager" {
 }
 
 resource "helm_release" "external_dns" {
+  provider = helm.bartender
+
   name      = "external-dns"
   namespace = "external-dns"
 
