@@ -174,12 +174,12 @@ resource "helm_release" "aws_load_balancer_controller" {
   version    = "1.4.4"
 
   set {
-    name = "clusterName"
+    name  = "clusterName"
     value = module.eks_bartender.cluster_id
   }
 
   set {
-    name = "serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"
+    name  = "serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"
     value = aws_iam_role.bartender_eks_lbc_assumerole.arn
   }
 }
@@ -218,7 +218,7 @@ resource "kubernetes_secret" "external_dns" {
   provider = kubernetes.bartender
 
   metadata {
-    name = "cloudflare"
+    name      = "cloudflare"
     namespace = kubernetes_namespace.external_dns.id
   }
 
