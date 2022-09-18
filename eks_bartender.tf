@@ -207,12 +207,16 @@ variable "cloudflare_api_token" {
 }
 
 resource "kubernetes_namespace" "external_dns" {
+  provider = kubernetes.bartender
+
   metadata {
     name = "external-dns"
   }
 }
 
 resource "kubernetes_secret" "external_dns" {
+  provider = kubernetes.bartender
+
   metadata {
     name = "cloudflare"
     namespace = kubernetes_namespace.external_dns.id
