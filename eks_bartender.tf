@@ -179,7 +179,7 @@ resource "helm_release" "aws_load_balancer_controller" {
   }
 
   set {
-    name = "serviceAccount.annotations.\"eks.amazonaws.com/role-arn\""
+    name = "serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"
     value = aws_iam_role.bartender_eks_lbc_assumerole.arn
   }
 }
