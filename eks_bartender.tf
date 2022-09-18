@@ -202,6 +202,27 @@ resource "helm_release" "cert_manager" {
   }
 }
 
+variable "cloudflare_api_token" {
+  type = string
+}
+
+resource "kubernetes_namespace" "external_dns" {
+  metadata {
+    name = "external-dns"
+  }
+}
+
+resource "kubernetes_secret" "external_dns" {
+  metadata {
+    name = "cloudflare"
+    namespace = kubernetes_namespace.external_dns.id
+  }
+
+  data = {
+    CF_API_TOKEN = var.cloudflare_api_token
+  }
+}
+
 resource "helm_release" "external_dns" {
   provider = helm.bartender
 
@@ -212,7 +233,9 @@ resource "helm_release" "external_dns" {
   chart      = "external-dns"
   version    = "1.11.0"
 
-  create_namespace = true
+  depends_on = [
+    kubernetes_secret.external_dns
+  ]
 
   values = [
     file("helm/externaldns.yaml")
