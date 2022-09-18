@@ -212,38 +212,7 @@ resource "helm_release" "external_dns" {
 
   create_namespace = true
 
-  set {
-    name  = "provider"
-    value = "cloudflare"
-  }
-
-  set {
-    name  = "sources[0]"
-    value = "ingress"
-  }
-
-  set {
-    name  = "domainFilters[0]"
-    value = "bacchus.io"
-  }
-
-  set {
-    name  = "extraArgs[0]"
-    value = "--cloudflare-proxied"
-  }
-
-  set {
-    name  = "env[0].name"
-    value = "CF_API_TOKEN"
-  }
-
-  set {
-    name  = "env[0].valueFrom.secretKeyRef.name"
-    value = "cloudflare"
-  }
-
-  set {
-    name  = "env[0].valueFrom.secretKeyRef.key"
-    value = "CF_API_TOKEN"
-  }
+  values = [
+    file("helm/externaldns.yaml")
+  ]
 }
