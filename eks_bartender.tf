@@ -44,6 +44,40 @@ module "ebs_csi_irsa_role" {
   }
 }
 
+resource "kubernetes_storage_class" "gp2" {
+  metadata {
+    name = "gp2"
+    annotations = {
+      "storageclass.kubernetes.io/is-default-class" = "false"
+    }
+  }
+
+  storage_provisioner = "kubernetes.io/aws-ebs"
+  volume_binding_mode = "WaitForFirstConsumer"
+  reclaim_policy      = "Delete"
+
+  parameters = {
+    fsType = "ext4"
+    type   = "gp2"
+  }
+}
+
+resource "kubernetes_storage_class" "gp3" {
+  metadata {
+    name = "gp3"
+    annotations = {
+      "storageclass.kubernetes.io/is-default-class" = "true"
+    }
+  }
+
+  storage_provisioner = "ebs.csi.aws.com"
+  volume_binding_mode = "WaitForFirstConsumer"
+
+  parameters = {
+    type = "gp3"
+  }
+}
+
 module "vpc_cni_irsa_role" {
   source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
   version = "~> 5.4"
