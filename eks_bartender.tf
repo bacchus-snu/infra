@@ -48,8 +48,7 @@ module "vpc_cni_irsa_role" {
   source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
   version = "~> 5.4"
 
-  role_name = "vpc-cni"
-
+  role_name             = "vpc-cni"
   attach_vpc_cni_policy = true
   vpc_cni_enable_ipv4   = true
 
@@ -65,8 +64,7 @@ module "aws_lbc_irsa_role" {
   source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
   version = "~> 5.4"
 
-  role_name = "aws-load-balance-controller"
-
+  role_name                              = "aws-load-balance-controller"
   attach_load_balancer_controller_policy = true
 
   oidc_providers = {
