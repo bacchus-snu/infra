@@ -54,11 +54,11 @@ resource "kubernetes_storage_class" "gp2" {
 
   storage_provisioner = "kubernetes.io/aws-ebs"
   volume_binding_mode = "WaitForFirstConsumer"
-  reclaim_policy = "Delete"
+  reclaim_policy      = "Delete"
 
   parameters = {
     fsType = "ext4"
-    type = "gp2"
+    type   = "gp2"
   }
 }
 
