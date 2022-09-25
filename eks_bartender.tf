@@ -45,6 +45,8 @@ module "ebs_csi_irsa_role" {
 }
 
 resource "kubernetes_storage_class" "gp2" {
+  provider = kubernetes.bartender
+
   metadata {
     name = "gp2"
     annotations = {
@@ -63,6 +65,8 @@ resource "kubernetes_storage_class" "gp2" {
 }
 
 resource "kubernetes_storage_class" "gp3" {
+  provider = kubernetes.bartender
+
   metadata {
     name = "gp3"
     annotations = {
