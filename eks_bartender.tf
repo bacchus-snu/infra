@@ -29,9 +29,55 @@ provider "helm" {
   }
 }
 
+module "ebs_csi_irsa_role" {
+  source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
+  version = "~> 5.4"
+
+  role_name             = "ebs-csi"
+  attach_ebs_csi_policy = true
+
+  oidc_providers = {
+    main = {
+      provider_arn               = module.eks_bartender.oidc_provider_arn
+      namespace_service_accounts = ["kube-system:ebs-csi-controller-sa"]
+    }
+  }
+}
+
+module "vpc_cni_irsa_role" {
+  source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
+  version = "~> 5.4"
+
+  role_name             = "vpc-cni"
+  attach_vpc_cni_policy = true
+  vpc_cni_enable_ipv4   = true
+
+  oidc_providers = {
+    main = {
+      provider_arn               = module.eks_bartender.oidc_provider_arn
+      namespace_service_accounts = ["kube-system:aws-node"]
+    }
+  }
+}
+
+module "aws_lbc_irsa_role" {
+  source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
+  version = "~> 5.4"
+
+  role_name                              = "aws-load-balance-controller"
+  attach_load_balancer_controller_policy = true
+
+  oidc_providers = {
+    main = {
+      provider_arn               = module.eks_bartender.oidc_provider_arn
+      namespace_service_accounts = ["kube-system:aws-load-balancer-controller"]
+    }
+  }
+}
+
 module "eks_bartender" {
   source  = "terraform-aws-modules/eks/aws"
-  version = "~> 18.20"
+  version = "~> 18.29"
 
   providers = {
     kubernetes = kubernetes.bartender
@@ -55,7 +101,8 @@ module "eks_bartender" {
       addon_version = "v1.23.7-eksbuild.1"
     }
     aws-ebs-csi-driver = {
-      addon_version = "v1.10.0-eksbuild.1"
+      addon_version            = "v1.10.0-eksbuild.1"
+      service_account_role_arn = module.ebs_csi_irsa_role.iam_role_arn
     }
   }
 
@@ -135,34 +182,6 @@ module "eks_bartender" {
   }]
 }
 
-resource "aws_iam_role" "bartender_eks_lbc_assumerole" {
-  name = "BartenderEKSLoadBalancerControllerRole"
-
-  assume_role_policy = jsonencode({
-    "Version" = "2012-10-17",
-    "Statement" = [
-      {
-        "Effect" = "Allow",
-        "Principal" = {
-          "Federated" = module.eks_bartender.oidc_provider_arn,
-        },
-        "Action" = "sts:AssumeRoleWithWebIdentity",
-        "Condition" = {
-          "StringEquals" = {
-            "${module.eks_bartender.oidc_provider}:aud" = "sts.amazonaws.com",
-            "${module.eks_bartender.oidc_provider}:sub" = "system:serviceaccount:kube-system:aws-load-balancer-controller",
-          },
-        },
-      },
-    ],
-  })
-}
-
-resource "aws_iam_role_policy_attachment" "bartender_eks_lbc" {
-  role       = aws_iam_role.bartender_eks_lbc_assumerole.name
-  policy_arn = aws_iam_policy.aws_eks_lbc_policy.arn
-}
-
 resource "helm_release" "aws_load_balancer_controller" {
   provider = helm.bartender
 
@@ -180,7 +199,7 @@ resource "helm_release" "aws_load_balancer_controller" {
 
   set {
     name  = "serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"
-    value = aws_iam_role.bartender_eks_lbc_assumerole.arn
+    value = module.aws_lbc_irsa_role.iam_role_arn
   }
 }
 
