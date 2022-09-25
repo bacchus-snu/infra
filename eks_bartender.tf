@@ -31,7 +31,7 @@ provider "helm" {
 
 module "eks_bartender" {
   source  = "terraform-aws-modules/eks/aws"
-  version = "~> 18.20"
+  version = "~> 18.29"
 
   providers = {
     kubernetes = kubernetes.bartender
