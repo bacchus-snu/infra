@@ -336,7 +336,7 @@ resource "kubernetes_secret" "github_oauth" {
 
   metadata {
     name      = "github-oauth"
-    namespace = kubernetes_namespace.github_oauth.id
+    namespace = kubernetes_namespace.dashboard.id
   }
 
   data = {
