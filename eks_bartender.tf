@@ -318,3 +318,47 @@ resource "helm_release" "external_dns" {
     file("helm/externaldns.yaml")
   ]
 }
+
+variable "github_oauth_client_secret" {
+  type = string
+}
+
+resource "kubernetes_namespace" "dashboard" {
+  provider = kubernetes.bartender
+
+  metadata {
+    name = "dashboard"
+  }
+}
+
+resource "kubernetes_secret" "github_oauth" {
+  provider = kubernetes.bartender
+
+  metadata {
+    name      = "github-oauth"
+    namespace = kubernetes_namespace.github_oauth.id
+  }
+
+  data = {
+    secret = var.github_oauth_client_secret
+  }
+}
+
+resource "helm_release" "dashboard" {
+  provider = helm.bartender
+
+  name      = "dashboard"
+  namespace = kubernetes_namespace.dashboard.id
+
+  repository = "https://prometheus-community.github.io/helm-charts"
+  chart      = "kube-prometheus-stack"
+  version    = "40.2.0"
+
+  depends_on = [
+    kubernetes_secret.github_oauth
+  ]
+
+  values = [
+    file("helm/kube-prometheus-stack.yaml")
+  ]
+}
