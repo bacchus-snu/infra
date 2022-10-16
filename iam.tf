@@ -26,7 +26,12 @@ locals {
       console_enabled = true,
     },
     "whnbaek" = {
-      pgp_key         = file("./whnbaek.gpg"),
+      pgp_key         = file("./keys/whnbaek.gpg"),
+      is_admin        = true,
+      console_enabled = true,
+    },
+    "nevivurn" = {
+      pgp_key         = file("./keys/nevivurn.gpg"),
       is_admin        = true,
       console_enabled = true,
     },
