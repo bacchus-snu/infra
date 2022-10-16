@@ -41,6 +41,12 @@ resource "aws_instance" "bacchus_vpn_kr" {
   lifecycle {
     ignore_changes = [ami]
   }
+
+  iam_instance_profile = aws_iam_instance_profile.ec2_ssm.name
+
+  tags = {
+    Name = "bacchus-vpn-kr"
+  }
 }
 
 resource "aws_eip" "bacchus_vpn_kr" {
