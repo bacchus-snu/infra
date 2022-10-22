@@ -1,6 +1,16 @@
 alertmanager:
   enabled: false
 
+prometheus:
+  prometheusSpec:
+    storageSpec:
+      volumeClaimTemplate:
+        spec:
+          accessModes: ["ReadWriteOnce"]
+          resources:
+            requests:
+              storage: 100Gi
+
 grafana:
   imageRenderer:
     grafanaProtocol: https
