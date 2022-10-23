@@ -362,3 +362,24 @@ resource "helm_release" "dashboard" {
     file("helm/kube-prometheus-stack.yaml")
   ]
 }
+
+resource "helm_release" "loki" {
+  provider = helm.bartender
+
+  name      = "loki"
+  namespace = kubernetes_namespace.dashboard.id
+
+  repository = "https://grafana.github.io/helm-charts"
+  chart      = "loki-stack"
+  version    = "2.8.3"
+
+  set {
+    name  = "loki.persistence.enabled"
+    value = "true"
+  }
+
+  set {
+    name  = "loki.persistence.size"
+    value = "100Gi"
+  }
+}
