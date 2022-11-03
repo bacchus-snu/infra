@@ -222,7 +222,7 @@ module "eks_bartender" {
 
       disk_size = 50
 
-      max_size     = 2
+      max_size     = 4
       desired_size = 2
     }
   }
