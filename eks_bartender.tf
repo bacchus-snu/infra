@@ -82,6 +82,22 @@ resource "kubernetes_storage_class" "gp3" {
   }
 }
 
+module "cluster_autoscaler_irsa_role" {
+  source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
+  version = "~> 5.4"
+
+  role_name                        = "cluster-autoscaler"
+  attach_cluster_autoscaler_policy = true
+  cluster_autoscaler_cluster_ids   = [module.eks_bartender.cluster_id]
+
+  oidc_providers = {
+    main = {
+      provider_arn               = module.eks_bartender.oidc_provider_arn
+      namespace_service_accounts = ["kube-system:cluster-autoscaler"]
+    }
+  }
+}
+
 module "vpc_cni_irsa_role" {
   source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
   version = "~> 5.4"
@@ -238,6 +254,35 @@ resource "helm_release" "aws_load_balancer_controller" {
   set {
     name  = "serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"
     value = module.aws_lbc_irsa_role.iam_role_arn
+  }
+}
+
+resource "helm_release" "cluster_autoscaler" {
+  name      = "cluster-autoscaler"
+  namespace = "kube-system"
+
+  repository = "https://kubernetes.github.io/autoscaler"
+  chart      = "cluster-autoscaler"
+  version    = "9.21.0"
+
+  set {
+    name  = "awsRegion"
+    value = "ap-northeast-2"
+  }
+
+  set {
+    name  = "autoDiscovery.clusterName"
+    value = module.eks_bartender.cluster_id
+  }
+
+  set {
+    name  = "rbac.serviceAccount.name"
+    value = "cluster-autoscaler"
+  }
+
+  set {
+    name  = "rbac.serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"
+    value = module.cluster_autoscaler_irsa_role.iam_role_arn
   }
 }
 
