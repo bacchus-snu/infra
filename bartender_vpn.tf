@@ -1,7 +1,7 @@
 data "aws_ami" "amazon_linux_2" {
   most_recent = true
 
-  owners = ["amazon", "aws-marketplace"]
+  owners = ["amazon"]
 
   filter {
     name   = "architecture"
@@ -31,6 +31,7 @@ resource "aws_instance" "bacchus_vpn_bartender_kr" {
   vpc_security_group_ids = [
     aws_security_group.bacchus_vpn_bartender_kr.id,
   ]
+  subnet_id         = module.vpc_bartender.public_subnets[0]
   source_dest_check = false
 
   root_block_device {
@@ -60,7 +61,7 @@ resource "aws_security_group" "bacchus_vpn_bartender_kr" {
     description = "wireguard encrypted traffic"
     from_port   = 51820
     to_port     = 51821
-    protocol    = "tcp"
+    protocol    = "udp"
     cidr_blocks = ["147.46.0.0/15"]
   }
   ingress {
@@ -69,5 +70,13 @@ resource "aws_security_group" "bacchus_vpn_bartender_kr" {
     to_port         = 0
     protocol        = "-1"
     security_groups = [] # TODO
+  }
+
+  egress {
+    from_port        = 0
+    to_port          = 0
+    protocol         = "-1"
+    cidr_blocks      = ["0.0.0.0/0"]
+    ipv6_cidr_blocks = ["::/0"]
   }
 }
