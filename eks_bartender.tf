@@ -489,7 +489,7 @@ resource "helm_release" "vaultwarden" {
 
   set {
     name  = "persistence.config.existingClaim"
-    value = kubernetes_persistent_volume_claim.vaultwarden_config.id
+    value = split("/", (kubernetes_persistent_volume_claim.vaultwarden_config.id))[1]
   }
 
   values = [
