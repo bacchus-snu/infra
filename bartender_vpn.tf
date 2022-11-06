@@ -1,31 +1,5 @@
-data "aws_ami" "amazon_linux_2" {
-  most_recent = true
-
-  owners = ["amazon"]
-
-  filter {
-    name   = "architecture"
-    values = ["x86_64"]
-  }
-
-  filter {
-    name   = "name"
-    values = ["amzn2-ami-*"]
-  }
-
-  filter {
-    name   = "root-device-type"
-    values = ["ebs"]
-  }
-
-  filter {
-    name   = "virtualization-type"
-    values = ["hvm"]
-  }
-}
-
 resource "aws_instance" "bacchus_vpn_bartender_kr" {
-  ami           = data.aws_ami.amazon_linux_2.id
+  ami           = data.aws_ami.debian_bullseye.id
   instance_type = "t3a.micro"
 
   vpc_security_group_ids = [
@@ -37,6 +11,15 @@ resource "aws_instance" "bacchus_vpn_bartender_kr" {
   root_block_device {
     volume_size = 30
   }
+
+  user_data = <<-EOF
+    #!/bin/bash
+    mkdir /tmp/ssm
+    cd /tmp/ssm
+    wget https://s3.amazonaws.com/ec2-downloads-windows/SSMAgent/latest/debian_amd64/amazon-ssm-agent.deb
+    sudo dpkg -i amazon-ssm-agent.deb
+    sudo systemctl enable --now amazon-ssm-agent
+  EOF
 
   lifecycle {
     ignore_changes = [ami]
@@ -64,6 +47,7 @@ resource "aws_security_group" "bacchus_vpn_bartender_kr" {
     protocol    = "udp"
     cidr_blocks = ["147.46.0.0/15"]
   }
+  /*
   ingress {
     description     = "traffic forwarding to SNU"
     from_port       = 0
@@ -71,6 +55,7 @@ resource "aws_security_group" "bacchus_vpn_bartender_kr" {
     protocol        = "-1"
     security_groups = [] # TODO
   }
+  */
 
   egress {
     from_port        = 0
