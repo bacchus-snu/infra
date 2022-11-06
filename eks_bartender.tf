@@ -258,6 +258,8 @@ resource "helm_release" "aws_load_balancer_controller" {
 }
 
 resource "helm_release" "cluster_autoscaler" {
+  provider = helm.bartender
+
   name      = "cluster-autoscaler"
   namespace = "kube-system"
 
