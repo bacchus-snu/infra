@@ -430,3 +430,69 @@ resource "helm_release" "loki" {
     value = "100Gi"
   }
 }
+
+variable "vaultwarden_smtp_password" {
+  type = string
+}
+
+resource "kubernetes_namespace" "vaultwarden" {
+  provider = kubernetes.bartender
+
+  metadata {
+    name = "vaultwarden"
+  }
+}
+
+resource "kubernetes_secret" "vaultwarden" {
+  provider = kubernetes.bartender
+
+  metadata {
+    name      = "vaultwarden-secret"
+    namespace = kubernetes_namespace.vaultwarden.id
+  }
+
+  data = {
+    "smtp-password" = var.vaultwarden_smtp_password
+  }
+}
+
+resource "kubernetes_persistent_volume_claim" "vaultwarden_config" {
+  provider = kubernetes.bartender
+
+  metadata {
+    name      = "vaultwarden-config"
+    namespace = kubernetes_namespace.vaultwarden.id
+  }
+  spec {
+    access_modes = ["ReadWriteOnce"]
+    resources {
+      requests = {
+        storage = "16Gi"
+      }
+    }
+  }
+}
+
+resource "helm_release" "vaultwarden" {
+  provider = helm.bartender
+
+  name      = "vaultwarden"
+  namespace = kubernetes_namespace.vaultwarden.id
+
+  repository = "https://k8s-at-home.com/charts/"
+  chart      = "vaultwarden"
+  version    = "5.3.2"
+
+  depends_on = [
+    kubernetes_secret.vaultwarden
+  ]
+
+  set {
+    name  = "persistence.config.existingClaim"
+    value = kubernetes_persistent_volume_claim.vaultwarden_config.id
+  }
+
+  values = [
+    file("helm/vaultwarden.yaml")
+  ]
+}
