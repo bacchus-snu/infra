@@ -496,3 +496,51 @@ resource "helm_release" "vaultwarden" {
     file("helm/vaultwarden.yaml")
   ]
 }
+
+variable "argocd_github_oauth_client_secret" {
+  type = string
+}
+
+resource "kubernetes_namespace" "argo" {
+  provider = kubernetes.bartender
+
+  metadata {
+    name = "argo"
+  }
+}
+
+resource "kubernetes_secret" "argocd_github_oauth" {
+  provider = kubernetes.bartender
+
+  metadata {
+    name      = "github-oauth"
+    namespace = kubernetes_namespace.argo.id
+
+    labels = {
+      "app.kubernetes.io/part-of" = "argocd"
+    }
+  }
+
+  data = {
+    secret = var.argocd_github_oauth_client_secret
+  }
+}
+
+resource "helm_release" "argocd" {
+  provider = helm.bartender
+
+  name      = "argo-cd"
+  namespace = kubernetes_namespace.argo.id
+
+  repository = "https://argoproj.github.io/argo-helm"
+  chart      = "argo-cd"
+  version    = "5.13.3"
+
+  depends_on = [
+    kubernetes_secret.argocd_github_oauth
+  ]
+
+  values = [
+    file("helm/argo-cd.yaml")
+  ]
+}

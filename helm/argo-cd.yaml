@@ -1,0 +1,37 @@
+server:
+  extraArgs:
+  - --insecure
+
+  ingress:
+    enabled: true
+    ingressClassName: alb
+    annotations:
+      alb.ingress.kubernetes.io/scheme: internet-facing
+      alb.ingress.kubernetes.io/target-type: ip
+      alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}, {"HTTPS":443}]'
+      alb.ingress.kubernetes.io/ssl-redirect: '443'
+    hosts:
+    - cd.bacchus.io
+
+configs:
+  cm:
+    url: https://cd.bacchus.io
+    admin.enabled: false
+    dex.config: |
+      connectors:
+      - type: github
+        id: github
+        name: GitHub
+        config:
+          clientID: 36bc63e3739b7724c29a
+          clientSecret: $github-oauth:dex.github.clientSecret
+          orgs:
+          - name: bacchus-snu
+
+  params:
+    server.insecure: true
+
+  rbac:
+    policy.default: role:readonly
+    policy.csv: |
+      g, bacchus-snu:deputy, role:admin
