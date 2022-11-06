@@ -522,7 +522,7 @@ resource "kubernetes_secret" "argocd_github_oauth" {
   }
 
   data = {
-    secret = var.argocd_github_oauth_client_secret
+    "dex.github.clientSecret" = var.argocd_github_oauth_client_secret
   }
 }
 
