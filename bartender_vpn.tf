@@ -47,15 +47,13 @@ resource "aws_security_group" "bacchus_vpn_bartender_kr" {
     protocol    = "udp"
     cidr_blocks = ["147.46.0.0/15"]
   }
-  /*
   ingress {
-    description     = "traffic forwarding to SNU"
-    from_port       = 0
-    to_port         = 0
-    protocol        = "-1"
-    security_groups = [] # TODO
+    description = "traffic forwarding to SNU"
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = [module.vpc_bartender.vpc_cidr_block]
   }
-  */
 
   egress {
     from_port        = 0
@@ -64,4 +62,15 @@ resource "aws_security_group" "bacchus_vpn_bartender_kr" {
     cidr_blocks      = ["0.0.0.0/0"]
     ipv6_cidr_blocks = ["::/0"]
   }
+}
+
+resource "aws_route" "bacchus_vpn_bartender_kr" {
+  for_each = toset(concat(
+    module.vpc_bartender.public_route_table_ids,
+    module.vpc_bartender.private_route_table_ids,
+  ))
+
+  route_table_id         = each.value
+  destination_cidr_block = "147.46.0.0/15"
+  network_interface_id   = aws_instance.bacchus_vpn_bartender_kr.primary_network_interface_id
 }
