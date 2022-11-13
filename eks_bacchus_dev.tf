@@ -96,16 +96,16 @@ module "eks_bacchus_dev" {
     ]
   }
 
-  eks_managed_node_groups = {
-    workers = {
-      name = "bacchus-dev-workers"
-
-      disk_size = 50
-
-      max_size     = 2
-      desired_size = 2
-    }
-  }
+#   eks_managed_node_groups = {
+#     workers = {
+#       name = "bacchus-dev-workers"
+# 
+#       disk_size = 50
+# 
+#       max_size     = 2
+#       desired_size = 2
+#     }
+#   }
 
   manage_aws_auth_configmap = true
 
