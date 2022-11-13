@@ -5,7 +5,7 @@ resource "aws_instance" "bacchus_vpn_bartender_kr" {
   vpc_security_group_ids = [
     aws_security_group.bacchus_vpn_bartender_kr.id,
   ]
-  subnet_id         = module.vpc_bartender.public_subnets[0]
+  subnet_id         = aws_subnet.bartender_wireguard_subnet.id
   source_dest_check = false
 
   root_block_device {
@@ -52,7 +52,7 @@ resource "aws_security_group" "bacchus_vpn_bartender_kr" {
     from_port   = 0
     to_port     = 0
     protocol    = "-1"
-    cidr_blocks = [module.vpc_bartender.vpc_cidr_block]
+    cidr_blocks = concat([module.vpc_bartender.vpc_cidr_block], module.vpc_bartender.vpc_secondary_cidr_blocks)
   }
 
   egress {

@@ -4,6 +4,9 @@ module "vpc_bartender" {
 
   name = "bartender"
   cidr = "10.1.0.0/16"
+  secondary_cidr_blocks = [
+    "10.0.0.0/16"
+  ]
 
   azs             = ["ap-northeast-2a", "ap-northeast-2b", "ap-northeast-2c", "ap-northeast-2d"]
   private_subnets = ["10.1.0.0/19", "10.1.32.0/19", "10.1.64.0/19", "10.1.96.0/19"]
@@ -56,6 +59,24 @@ resource "aws_security_group" "wireguard_with_ssh" {
   vpc_id      = aws_default_vpc.bacchus.id
 }
 
+resource "aws_subnet" "bartender_wireguard_subnet" {
+  vpc_id                  = module.vpc_bartender.vpc_id
+  cidr_block              = "10.0.255.240/28"
+  availability_zone       = "ap-northeast-2a"
+  map_public_ip_on_launch = true
+}
+resource "aws_route_table" "bartender_wireguard_route" {
+  vpc_id = module.vpc_bartender.vpc_id
+  route {
+    cidr_block = "0.0.0.0/0"
+    gateway_id = module.vpc_bartender.igw_id
+  }
+}
+resource "aws_route_table_association" "bartender_wireguard_subnet_route" {
+  subnet_id      = aws_subnet.bartender_wireguard_subnet.id
+  route_table_id = aws_route_table.bartender_wireguard_route.id
+}
+
 resource "aws_security_group_rule" "wireguard_with_ssh_egress" {
   security_group_id = aws_security_group.wireguard_with_ssh.id
 
@@ -67,7 +88,6 @@ resource "aws_security_group_rule" "wireguard_with_ssh_egress" {
   cidr_blocks      = ["0.0.0.0/0"]
   ipv6_cidr_blocks = ["::/0"]
 }
-
 resource "aws_security_group_rule" "wireguard_with_ssh_ingress" {
   for_each = { for spec in [["tcp", 22], ["udp", 51820]] : "${spec[0]}-${spec[1]}" => spec }
 
