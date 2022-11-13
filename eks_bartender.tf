@@ -406,7 +406,8 @@ resource "helm_release" "dashboard" {
   ]
 
   values = [
-    file("helm/kube-prometheus-stack.yaml")
+    file("helm/kube-prometheus-stack.yaml"),
+    file("helm/kube-prometheus-additional-scrape-configs.yaml")
   ]
 }
 
