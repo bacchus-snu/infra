@@ -45,13 +45,13 @@ module "eks_bacchus_dev" {
 
   cluster_enabled_log_types = []
 
-  eks_managed_node_group_defaults = {
-    ami_type       = "AL2_x86_64"
-    instance_types = ["t3.medium"]
-    iam_role_additional_policies = [
-      "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly",
-    ]
-  }
+#   eks_managed_node_group_defaults = {
+#     ami_type       = "AL2_x86_64"
+#     instance_types = ["t3.medium"]
+#     iam_role_additional_policies = [
+#       "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly",
+#     ]
+#   }
 
 #   eks_managed_node_groups = {
 #     workers = {
