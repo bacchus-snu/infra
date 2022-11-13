@@ -5,7 +5,7 @@ module "vpc_bartender" {
   name = "bartender"
   cidr = "10.1.0.0/16"
   secondary_cidr_blocks = [
-    "10.0.0.0/16"
+    "10.2.0.0/16"
   ]
 
   azs             = ["ap-northeast-2a", "ap-northeast-2b", "ap-northeast-2c", "ap-northeast-2d"]
@@ -61,7 +61,7 @@ resource "aws_security_group" "wireguard_with_ssh" {
 
 resource "aws_subnet" "bartender_wireguard_subnet" {
   vpc_id                  = module.vpc_bartender.vpc_id
-  cidr_block              = "10.0.255.240/28"
+  cidr_block              = "10.2.255.240/28"
   availability_zone       = "ap-northeast-2a"
   map_public_ip_on_launch = true
 }
