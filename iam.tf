@@ -35,6 +35,11 @@ locals {
       is_admin        = true,
       console_enabled = true,
     },
+    "minty99" = {
+      pgp_key         = "keybase:minty99",
+      is_admin        = true,
+      console_enabled = true,
+    },
     "terraform-cloud" = {
       pgp_key         = "",
       is_admin        = true,
