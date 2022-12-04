@@ -210,7 +210,7 @@ module "eks_bartender" {
 
   eks_managed_node_group_defaults = {
     ami_type       = "AL2_x86_64"
-    instance_types = ["t3.medium"]
+    instance_types = ["t3.large"]
     iam_role_additional_policies = [
       "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly",
     ]
