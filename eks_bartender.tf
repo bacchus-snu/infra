@@ -217,13 +217,25 @@ module "eks_bartender" {
   }
 
   eks_managed_node_groups = {
-    workers = {
-      name = "bartender-workers"
+    workers_b = {
+      name = "bartender-workers-b"
 
       disk_size = 50
 
-      max_size     = 4
-      desired_size = 2
+      max_size     = 2
+      desired_size = 1
+      
+      subnet_ids = [module.vpc_bartender.private_subnets[1]]
+    }
+    workers_d = {
+      name = "bartender-workers-d"
+
+      disk_size = 50
+
+      max_size     = 2
+      desired_size = 1
+      
+      subnet_ids = [module.vpc_bartender.private_subnets[3]]
     }
   }
 
@@ -275,6 +287,11 @@ resource "helm_release" "cluster_autoscaler" {
   set {
     name  = "autoDiscovery.clusterName"
     value = module.eks_bartender.cluster_id
+  }
+
+  set {
+    name  = "extraArgs.balance-similar-node-groups"
+    value = true
   }
 
   set {
