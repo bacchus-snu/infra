@@ -129,6 +129,21 @@ module "aws_lbc_irsa_role" {
   }
 }
 
+module "external_secrets_irsa_role" {
+  source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
+  version = "~> 5.4"
+
+  role_name                      = "external-secrets"
+  attach_external_secrets_policy = true
+
+  oidc_providers = {
+    main = {
+      provider_arn               = module.eks_bartender.oidc_provider_arn
+      namespace_service_accounts = ["external-secrets:external-secrets"]
+    }
+  }
+}
+
 module "eks_bartender" {
   source  = "terraform-aws-modules/eks/aws"
   version = "~> 18.29"
@@ -224,7 +239,7 @@ module "eks_bartender" {
 
       max_size     = 2
       desired_size = 1
-      
+
       subnet_ids = [module.vpc_bartender.private_subnets[1]]
     }
     workers_d = {
@@ -234,7 +249,7 @@ module "eks_bartender" {
 
       max_size     = 2
       desired_size = 1
-      
+
       subnet_ids = [module.vpc_bartender.private_subnets[3]]
     }
   }
@@ -246,272 +261,6 @@ module "eks_bartender" {
     username = username,
     groups   = ["system:masters"]
   }]
-}
-
-resource "helm_release" "aws_load_balancer_controller" {
-  provider = helm.bartender
-
-  name      = "aws-load-balancer-controller"
-  namespace = "kube-system"
-
-  repository = "https://aws.github.io/eks-charts"
-  chart      = "aws-load-balancer-controller"
-  version    = "1.4.4"
-
-  set {
-    name  = "clusterName"
-    value = module.eks_bartender.cluster_id
-  }
-
-  set {
-    name  = "serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"
-    value = module.aws_lbc_irsa_role.iam_role_arn
-  }
-}
-
-resource "helm_release" "cluster_autoscaler" {
-  provider = helm.bartender
-
-  name      = "cluster-autoscaler"
-  namespace = "kube-system"
-
-  repository = "https://kubernetes.github.io/autoscaler"
-  chart      = "cluster-autoscaler"
-  version    = "9.21.0"
-
-  set {
-    name  = "awsRegion"
-    value = "ap-northeast-2"
-  }
-
-  set {
-    name  = "autoDiscovery.clusterName"
-    value = module.eks_bartender.cluster_id
-  }
-
-  set {
-    name  = "extraArgs.balance-similar-node-groups"
-    value = true
-  }
-
-  set {
-    name  = "rbac.serviceAccount.name"
-    value = "cluster-autoscaler"
-  }
-
-  set {
-    name  = "rbac.serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"
-    value = module.cluster_autoscaler_irsa_role.iam_role_arn
-  }
-}
-
-resource "helm_release" "metrics_server" {
-  provider = helm.bartender
-
-  name      = "metrics-server"
-  namespace = "kube-system"
-
-  repository = "https://kubernetes-sigs.github.io/metrics-server/"
-  chart      = "metrics-server"
-  version    = "3.8.2"
-
-  set {
-    name  = "containerPort"
-    value = "10250"
-  }
-}
-
-resource "helm_release" "cert_manager" {
-  provider = helm.bartender
-
-  name      = "cert-manager"
-  namespace = "cert-manager"
-
-  repository = "https://charts.jetstack.io"
-  chart      = "cert-manager"
-  version    = "1.9.1"
-
-  create_namespace = true
-
-  set {
-    name  = "installCRDs"
-    value = "true"
-  }
-}
-
-variable "cloudflare_api_token" {
-  type = string
-}
-
-resource "kubernetes_namespace" "external_dns" {
-  provider = kubernetes.bartender
-
-  metadata {
-    name = "external-dns"
-  }
-}
-
-resource "kubernetes_secret" "external_dns" {
-  provider = kubernetes.bartender
-
-  metadata {
-    name      = "cloudflare"
-    namespace = kubernetes_namespace.external_dns.id
-  }
-
-  data = {
-    CF_API_TOKEN = var.cloudflare_api_token
-  }
-}
-
-resource "helm_release" "external_dns" {
-  provider = helm.bartender
-
-  name      = "external-dns"
-  namespace = "external-dns"
-
-  repository = "https://kubernetes-sigs.github.io/external-dns"
-  chart      = "external-dns"
-  version    = "1.11.0"
-
-  depends_on = [
-    kubernetes_secret.external_dns
-  ]
-
-  values = [
-    file("helm/externaldns.yaml")
-  ]
-}
-
-variable "github_oauth_client_secret" {
-  type = string
-}
-
-resource "kubernetes_namespace" "dashboard" {
-  provider = kubernetes.bartender
-
-  metadata {
-    name = "dashboard"
-  }
-}
-
-resource "kubernetes_secret" "github_oauth" {
-  provider = kubernetes.bartender
-
-  metadata {
-    name      = "github-oauth"
-    namespace = kubernetes_namespace.dashboard.id
-  }
-
-  data = {
-    secret = var.github_oauth_client_secret
-  }
-}
-
-resource "helm_release" "dashboard" {
-  provider = helm.bartender
-
-  name      = "dashboard"
-  namespace = kubernetes_namespace.dashboard.id
-
-  repository = "https://prometheus-community.github.io/helm-charts"
-  chart      = "kube-prometheus-stack"
-  version    = "40.2.0"
-
-  depends_on = [
-    kubernetes_secret.github_oauth
-  ]
-
-  values = [
-    file("helm/kube-prometheus-stack.yaml")
-  ]
-}
-
-resource "helm_release" "loki" {
-  provider = helm.bartender
-
-  name      = "loki"
-  namespace = kubernetes_namespace.dashboard.id
-
-  repository = "https://grafana.github.io/helm-charts"
-  chart      = "loki-stack"
-  version    = "2.8.4"
-
-  set {
-    name  = "loki.persistence.enabled"
-    value = "true"
-  }
-
-  set {
-    name  = "loki.persistence.size"
-    value = "100Gi"
-  }
-}
-
-variable "vaultwarden_smtp_password" {
-  type = string
-}
-
-resource "kubernetes_namespace" "vaultwarden" {
-  provider = kubernetes.bartender
-
-  metadata {
-    name = "vaultwarden"
-  }
-}
-
-resource "kubernetes_secret" "vaultwarden" {
-  provider = kubernetes.bartender
-
-  metadata {
-    name      = "vaultwarden-secret"
-    namespace = kubernetes_namespace.vaultwarden.id
-  }
-
-  data = {
-    "smtp-password" = var.vaultwarden_smtp_password
-  }
-}
-
-resource "kubernetes_persistent_volume_claim" "vaultwarden_config" {
-  provider = kubernetes.bartender
-
-  metadata {
-    name      = "vaultwarden-config"
-    namespace = kubernetes_namespace.vaultwarden.id
-  }
-  spec {
-    access_modes = ["ReadWriteOnce"]
-    resources {
-      requests = {
-        storage = "16Gi"
-      }
-    }
-  }
-}
-
-resource "helm_release" "vaultwarden" {
-  provider = helm.bartender
-
-  name      = "vaultwarden"
-  namespace = kubernetes_namespace.vaultwarden.id
-
-  repository = "https://k8s-at-home.com/charts/"
-  chart      = "vaultwarden"
-  version    = "5.3.2"
-
-  depends_on = [
-    kubernetes_secret.vaultwarden
-  ]
-
-  set {
-    name  = "persistence.config.existingClaim"
-    value = split("/", (kubernetes_persistent_volume_claim.vaultwarden_config.id))[1]
-  }
-
-  values = [
-    file("helm/vaultwarden.yaml")
-  ]
 }
 
 variable "argocd_github_oauth_client_secret" {
@@ -560,19 +309,4 @@ resource "helm_release" "argocd" {
   values = [
     file("helm/argo-cd.yaml")
   ]
-}
-
-module "external_secrets_irsa_role" {
-  source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
-  version = "~> 5.4"
-
-  role_name                      = "external-secrets"
-  attach_external_secrets_policy = true
-
-  oidc_providers = {
-    main = {
-      provider_arn               = module.eks_bartender.oidc_provider_arn
-      namespace_service_accounts = ["external-secrets:external-secrets"]
-    }
-  }
 }
