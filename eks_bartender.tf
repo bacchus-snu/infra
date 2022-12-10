@@ -263,27 +263,6 @@ module "eks_bartender" {
   }]
 }
 
-resource "helm_release" "aws_load_balancer_controller" {
-  provider = helm.bartender
-
-  name      = "aws-load-balancer-controller"
-  namespace = "kube-system"
-
-  repository = "https://aws.github.io/eks-charts"
-  chart      = "aws-load-balancer-controller"
-  version    = "1.4.4"
-
-  set {
-    name  = "clusterName"
-    value = module.eks_bartender.cluster_id
-  }
-
-  set {
-    name  = "serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"
-    value = module.aws_lbc_irsa_role.iam_role_arn
-  }
-}
-
 resource "helm_release" "cluster_autoscaler" {
   provider = helm.bartender
 
@@ -406,27 +385,6 @@ resource "helm_release" "dashboard" {
   values = [
     file("helm/kube-prometheus-stack.yaml")
   ]
-}
-
-resource "helm_release" "loki" {
-  provider = helm.bartender
-
-  name      = "loki"
-  namespace = kubernetes_namespace.dashboard.id
-
-  repository = "https://grafana.github.io/helm-charts"
-  chart      = "loki-stack"
-  version    = "2.8.4"
-
-  set {
-    name  = "loki.persistence.enabled"
-    value = "true"
-  }
-
-  set {
-    name  = "loki.persistence.size"
-    value = "100Gi"
-  }
 }
 
 variable "vaultwarden_smtp_password" {
