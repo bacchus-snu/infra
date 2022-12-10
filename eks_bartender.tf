@@ -336,24 +336,6 @@ resource "helm_release" "metrics_server" {
   }
 }
 
-resource "helm_release" "cert_manager" {
-  provider = helm.bartender
-
-  name      = "cert-manager"
-  namespace = "cert-manager"
-
-  repository = "https://charts.jetstack.io"
-  chart      = "cert-manager"
-  version    = "1.9.1"
-
-  create_namespace = true
-
-  set {
-    name  = "installCRDs"
-    value = "true"
-  }
-}
-
 variable "cloudflare_api_token" {
   type = string
 }
