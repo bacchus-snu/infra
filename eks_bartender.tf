@@ -129,6 +129,21 @@ module "aws_lbc_irsa_role" {
   }
 }
 
+module "external_secrets_irsa_role" {
+  source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
+  version = "~> 5.4"
+
+  role_name                      = "external-secrets"
+  attach_external_secrets_policy = true
+
+  oidc_providers = {
+    main = {
+      provider_arn               = module.eks_bartender.oidc_provider_arn
+      namespace_service_accounts = ["external-secrets:external-secrets"]
+    }
+  }
+}
+
 module "eks_bartender" {
   source  = "terraform-aws-modules/eks/aws"
   version = "~> 18.29"
@@ -224,7 +239,7 @@ module "eks_bartender" {
 
       max_size     = 2
       desired_size = 1
-      
+
       subnet_ids = [module.vpc_bartender.private_subnets[1]]
     }
     workers_d = {
@@ -234,7 +249,7 @@ module "eks_bartender" {
 
       max_size     = 2
       desired_size = 1
-      
+
       subnet_ids = [module.vpc_bartender.private_subnets[3]]
     }
   }
@@ -560,19 +575,4 @@ resource "helm_release" "argocd" {
   values = [
     file("helm/argo-cd.yaml")
   ]
-}
-
-module "external_secrets_irsa_role" {
-  source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
-  version = "~> 5.4"
-
-  role_name                      = "external-secrets"
-  attach_external_secrets_policy = true
-
-  oidc_providers = {
-    main = {
-      provider_arn               = module.eks_bartender.oidc_provider_arn
-      namespace_service_accounts = ["external-secrets:external-secrets"]
-    }
-  }
 }
