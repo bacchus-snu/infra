@@ -320,22 +320,6 @@ resource "helm_release" "cluster_autoscaler" {
   }
 }
 
-resource "helm_release" "metrics_server" {
-  provider = helm.bartender
-
-  name      = "metrics-server"
-  namespace = "kube-system"
-
-  repository = "https://kubernetes-sigs.github.io/metrics-server/"
-  chart      = "metrics-server"
-  version    = "3.8.2"
-
-  set {
-    name  = "containerPort"
-    value = "10250"
-  }
-}
-
 variable "cloudflare_api_token" {
   type = string
 }
