@@ -267,46 +267,6 @@ variable "cloudflare_api_token" {
   type = string
 }
 
-resource "kubernetes_namespace" "external_dns" {
-  provider = kubernetes.bartender
-
-  metadata {
-    name = "external-dns"
-  }
-}
-
-resource "kubernetes_secret" "external_dns" {
-  provider = kubernetes.bartender
-
-  metadata {
-    name      = "cloudflare"
-    namespace = kubernetes_namespace.external_dns.id
-  }
-
-  data = {
-    CF_API_TOKEN = var.cloudflare_api_token
-  }
-}
-
-resource "helm_release" "external_dns" {
-  provider = helm.bartender
-
-  name      = "external-dns"
-  namespace = "external-dns"
-
-  repository = "https://kubernetes-sigs.github.io/external-dns"
-  chart      = "external-dns"
-  version    = "1.11.0"
-
-  depends_on = [
-    kubernetes_secret.external_dns
-  ]
-
-  values = [
-    file("helm/externaldns.yaml")
-  ]
-}
-
 variable "github_oauth_client_secret" {
   type = string
 }
