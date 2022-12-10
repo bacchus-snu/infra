@@ -263,42 +263,6 @@ module "eks_bartender" {
   }]
 }
 
-resource "helm_release" "cluster_autoscaler" {
-  provider = helm.bartender
-
-  name      = "cluster-autoscaler"
-  namespace = "kube-system"
-
-  repository = "https://kubernetes.github.io/autoscaler"
-  chart      = "cluster-autoscaler"
-  version    = "9.21.0"
-
-  set {
-    name  = "awsRegion"
-    value = "ap-northeast-2"
-  }
-
-  set {
-    name  = "autoDiscovery.clusterName"
-    value = module.eks_bartender.cluster_id
-  }
-
-  set {
-    name  = "extraArgs.balance-similar-node-groups"
-    value = true
-  }
-
-  set {
-    name  = "rbac.serviceAccount.name"
-    value = "cluster-autoscaler"
-  }
-
-  set {
-    name  = "rbac.serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"
-    value = module.cluster_autoscaler_irsa_role.iam_role_arn
-  }
-}
-
 variable "cloudflare_api_token" {
   type = string
 }
