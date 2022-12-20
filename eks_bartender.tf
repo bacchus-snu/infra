@@ -159,18 +159,18 @@ module "eks_bartender" {
 
   cluster_addons = {
     vpc-cni = {
-      addon_version     = "v1.11.0-eksbuild.1"
+      addon_version     = "v1.12.0-eksbuild.1"
       resolve_conflicts = "OVERWRITE"
     }
     coredns = {
-      addon_version     = "v1.8.7-eksbuild.2"
+      addon_version     = "v1.8.7-eksbuild.3"
       resolve_conflicts = "OVERWRITE"
     }
     kube-proxy = {
-      addon_version = "v1.23.7-eksbuild.1"
+      addon_version = "v1.23.13-eksbuild.2"
     }
     aws-ebs-csi-driver = {
-      addon_version            = "v1.10.0-eksbuild.1"
+      addon_version            = "v1.13.0-eksbuild.3"
       service_account_role_arn = module.ebs_csi_irsa_role.iam_role_arn
     }
   }
