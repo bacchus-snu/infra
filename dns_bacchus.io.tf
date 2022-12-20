@@ -1,5 +1,6 @@
 resource "cloudflare_zone" "bacchus" {
-  zone = "bacchus.io"
+  account_id = "9d0fe600126436ae84ee3f9ed2f60a9c"
+  zone       = "bacchus.io"
 }
 
 resource "cloudflare_record" "bacchus_horoyoi" {
