@@ -40,15 +40,15 @@ locals {
       is_admin        = true,
       console_enabled = true,
     },
-    "terraform-cloud" = {
-      pgp_key         = "",
-      is_admin        = true,
-      console_enabled = false,
-    },
     "vexatone" = {
       pgp_key         = file("./keys/vexatone.gpg"),
       is_admin        = true,
       console_enabled = true,
+    },
+    "terraform-cloud" = {
+      pgp_key         = "",
+      is_admin        = true,
+      console_enabled = false,
     },
   }
 }
