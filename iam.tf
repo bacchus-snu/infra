@@ -40,16 +40,16 @@ locals {
       is_admin        = true,
       console_enabled = true,
     },
+    "songmin" = {
+      pgp_key         = "keybase:smintree99",
+      is_admin        = true,
+      console_enabled = true,
+    },
     "terraform-cloud" = {
       pgp_key         = "",
       is_admin        = true,
       console_enabled = false,
     },
-    "songmin" = {
-      pgp_key         = "keybase:smintree99",
-      is_admin        = true,
-      console_enabled = true,
-    }
   }
 }
 
