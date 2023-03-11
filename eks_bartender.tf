@@ -9,38 +9,7 @@ provider "kubernetes" {
     api_version = "client.authentication.k8s.io/v1beta1"
     command     = "aws"
     # This requires the awscli to be installed locally where Terraform is executed
-    args = ["eks", "get-token", "--cluster-name", module.eks_bartender.cluster_id]
-  }
-}
-
-provider "helm" {
-  alias = "bartender"
-
-  kubernetes {
-    host                   = module.eks_bartender.cluster_endpoint
-    cluster_ca_certificate = base64decode(module.eks_bartender.cluster_certificate_authority_data)
-
-    exec {
-      api_version = "client.authentication.k8s.io/v1beta1"
-      command     = "aws"
-      # This requires the awscli to be installed locally where Terraform is executed
-      args = ["eks", "get-token", "--cluster-name", module.eks_bartender.cluster_id]
-    }
-  }
-}
-
-module "ebs_csi_irsa_role" {
-  source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
-  version = "~> 5.4"
-
-  role_name             = "ebs-csi"
-  attach_ebs_csi_policy = true
-
-  oidc_providers = {
-    main = {
-      provider_arn               = module.eks_bartender.oidc_provider_arn
-      namespace_service_accounts = ["kube-system:ebs-csi-controller-sa"]
-    }
+    args = ["eks", "get-token", "--cluster-name", module.eks_bartender.cluster_name]
   }
 }
 
@@ -82,13 +51,29 @@ resource "kubernetes_storage_class" "gp3" {
   }
 }
 
+module "ebs_csi_irsa_role" {
+  source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
+  version = "~> 5.13"
+
+  role_name             = "ebs-csi"
+  attach_ebs_csi_policy = true
+
+  oidc_providers = {
+    main = {
+      provider_arn               = module.eks_bartender.oidc_provider_arn
+      namespace_service_accounts = ["kube-system:ebs-csi-controller-sa"]
+    }
+  }
+}
+
+
 module "cluster_autoscaler_irsa_role" {
   source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
-  version = "~> 5.4"
+  version = "~> 5.13"
 
   role_name                        = "cluster-autoscaler"
   attach_cluster_autoscaler_policy = true
-  cluster_autoscaler_cluster_ids   = [module.eks_bartender.cluster_id]
+  cluster_autoscaler_cluster_ids   = [module.eks_bartender.cluster_name]
 
   oidc_providers = {
     main = {
@@ -100,7 +85,7 @@ module "cluster_autoscaler_irsa_role" {
 
 module "vpc_cni_irsa_role" {
   source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
-  version = "~> 5.4"
+  version = "~> 5.13"
 
   role_name             = "vpc-cni"
   attach_vpc_cni_policy = true
@@ -116,7 +101,7 @@ module "vpc_cni_irsa_role" {
 
 module "aws_lbc_irsa_role" {
   source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
-  version = "~> 5.4"
+  version = "~> 5.13"
 
   role_name                              = "aws-load-balance-controller"
   attach_load_balancer_controller_policy = true
@@ -131,7 +116,7 @@ module "aws_lbc_irsa_role" {
 
 module "external_secrets_irsa_role" {
   source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
-  version = "~> 5.4"
+  version = "~> 5.13"
 
   role_name                      = "external-secrets"
   attach_external_secrets_policy = true
@@ -146,7 +131,7 @@ module "external_secrets_irsa_role" {
 
 module "eks_bartender" {
   source  = "terraform-aws-modules/eks/aws"
-  version = "~> 18.29"
+  version = "~> 19.10"
 
   providers = {
     kubernetes = kubernetes.bartender
@@ -159,18 +144,21 @@ module "eks_bartender" {
 
   cluster_addons = {
     vpc-cni = {
-      addon_version     = "v1.12.0-eksbuild.1"
-      resolve_conflicts = "OVERWRITE"
+      preserve    = true
+      most_recent = true
     }
     coredns = {
-      addon_version     = "v1.8.7-eksbuild.3"
-      resolve_conflicts = "OVERWRITE"
+      preserve    = true
+      most_recent = true
     }
     kube-proxy = {
-      addon_version = "v1.23.13-eksbuild.2"
+      preserve    = true
+      most_recent = true
     }
     aws-ebs-csi-driver = {
-      addon_version            = "v1.13.0-eksbuild.3"
+      preserve    = true
+      most_recent = true
+
       service_account_role_arn = module.ebs_csi_irsa_role.iam_role_arn
     }
   }
@@ -226,9 +214,10 @@ module "eks_bartender" {
   eks_managed_node_group_defaults = {
     ami_type       = "AL2_x86_64"
     instance_types = ["t3.large"]
-    iam_role_additional_policies = [
-      "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly",
-    ]
+
+    iam_role_additional_policies = {
+      additional = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly",
+    }
   }
 
   eks_managed_node_groups = {
