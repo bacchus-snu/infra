@@ -90,22 +90,6 @@ resource "aws_iam_user_login_profile" "bacchus" {
   }
 }
 
-resource "aws_iam_access_key" "bacchus" {
-  for_each = {
-    for user in aws_iam_user.bacchus :
-    user.name => local.users[user.name]["pgp_key"]
-  }
-
-  user    = each.key
-  pgp_key = each.value == "" ? null : each.value
-
-  lifecycle {
-    ignore_changes = [
-      pgp_key,
-    ]
-  }
-}
-
 resource "aws_iam_group" "bacchus_admin" {
   name = "bacchus-admin"
   path = "/"
