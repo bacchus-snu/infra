@@ -1,4 +1,3 @@
-# https://github.com/terraform-aws-modules/terraform-aws-eks/issues/2009#issuecomment-1096628912
 provider "kubernetes" {
   alias = "bartender"
 
@@ -8,8 +7,7 @@ provider "kubernetes" {
   exec {
     api_version = "client.authentication.k8s.io/v1beta1"
     command     = "aws"
-    # This requires the awscli to be installed locally where Terraform is executed
-    args = ["eks", "get-token", "--cluster-name", module.eks_bartender.cluster_name]
+    args        = ["eks", "get-token", "--cluster-name", module.eks_bartender.cluster_name]
   }
 }
 
@@ -146,6 +144,8 @@ module "eks_bartender" {
     vpc-cni = {
       preserve    = true
       most_recent = true
+
+      service_account_role_arn = module.vpc_cni_irsa_role.iam_role_arn
     }
     coredns = {
       preserve    = true
@@ -180,34 +180,7 @@ module "eks_bartender" {
   }
 
   # Extend node-to-node security group rules
-  node_security_group_additional_rules = {
-    ingress_self_all = {
-      description = "Node to node all ports/protocols"
-      protocol    = "-1"
-      from_port   = 0
-      to_port     = 0
-      type        = "ingress"
-      self        = true
-    }
-    egress_all = {
-      description      = "Node all egress"
-      protocol         = "-1"
-      from_port        = 0
-      to_port          = 0
-      type             = "egress"
-      cidr_blocks      = ["0.0.0.0/0"]
-      ipv6_cidr_blocks = ["::/0"]
-    }
-    ingress_allow_access_from_control_plane = {
-      description = "Allow access from control plane to webhook port of AWS load balancer controller"
-
-      type                          = "ingress"
-      protocol                      = "tcp"
-      from_port                     = 9443
-      to_port                       = 9443
-      source_cluster_security_group = true
-    }
-  }
+  node_security_group_additional_rules = {}
 
   cluster_enabled_log_types = []
 
