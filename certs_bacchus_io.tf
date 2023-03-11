@@ -25,7 +25,8 @@ resource "cloudflare_record" "bacchus_io_validation" {
   type  = each.value.type
   value = each.value.record
 
-  proxied = false
+  proxied         = false
+  allow_overwrite = true
 }
 
 resource "aws_acm_certificate_validation" "bacchus_io" {
