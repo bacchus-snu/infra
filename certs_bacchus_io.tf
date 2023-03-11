@@ -6,8 +6,6 @@ resource "aws_acm_certificate" "bacchus_io" {
   domain_name               = "bacchus.io"
   subject_alternative_names = ["*.bacchus.io"]
   validation_method         = "DNS"
-
-  key_algorithm = "EC_secp384r1"
 }
 
 resource "cloudflare_record" "bacchus_io_validation" {
