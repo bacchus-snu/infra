@@ -136,7 +136,7 @@ module "eks_bartender" {
   }
 
   cluster_name                    = "bartender"
-  cluster_version                 = "1.23"
+  cluster_version                 = "1.24"
   cluster_endpoint_private_access = true
   cluster_endpoint_public_access  = true
 
