@@ -55,6 +55,11 @@ locals {
       is_admin        = true,
       console_enabled = true,
     },
+    "pbzweihander" = {
+      pgp_key         = "keybase:pbzweihander"
+      is_admin        = true,
+      console_enabled = true,
+    },
     "terraform-cloud" = {
       pgp_key         = "",
       is_admin        = true,
