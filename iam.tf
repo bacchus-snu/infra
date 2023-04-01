@@ -1,5 +1,10 @@
 locals {
   users = {
+    "vionicbest" = {
+      pgp_key         = "keybase:vionicbest",
+      is_admin        = true,
+      console_enabled = true,
+    },
     "tirr" = {
       pgp_key         = "keybase:vbchunguk",
       is_admin        = true,
