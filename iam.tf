@@ -50,6 +50,11 @@ locals {
       is_admin        = true,
       console_enabled = true,
     },
+    "vegadodo" = {
+      pgp_key         = "keybase:vegadodo",
+      is_admin        = true,
+      console_enabled = true,
+    },
     "terraform-cloud" = {
       pgp_key         = "",
       is_admin        = true,
