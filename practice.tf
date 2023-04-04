@@ -68,3 +68,11 @@ resource "aws_security_group" "bacchus_practice" {
     ipv6_cidr_blocks = ["::/0"]
   }
 }
+
+resource "cloudflare_record" "bacchus_practice" {
+  zone_id = cloudflare_zone.bacchus.id
+
+  name  = "practice"
+  value = aws_eip.bacchus_practice.public_ip
+  type  = "A"
+}
