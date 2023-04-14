@@ -65,6 +65,11 @@ locals {
       is_admin        = true,
       console_enabled = true,
     },
+    "sailor1493" = {
+      pgp_key         = "keybase:sailor1493"
+      is_admin        = true,
+      console_enabled = true,
+    },
     "terraform-cloud" = {
       pgp_key         = "",
       is_admin        = true,
