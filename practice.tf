@@ -13,7 +13,7 @@ module "vpc_practice" {
 
 resource "aws_instance" "bacchus_practice" {
   ami           = data.aws_ami.debian_bullseye.id
-  instance_type = "t3.micro"
+  instance_type = "t3.large"
 
   vpc_security_group_ids = [
     aws_security_group.bacchus_practice.id,
