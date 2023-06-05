@@ -1,6 +1,6 @@
 module "vpc_practice" {
   source  = "terraform-aws-modules/vpc/aws"
-  version = "3.19.0"
+  version = "5.0.0"
 
   name = "practice"
   cidr = "10.1.0.0/16"
