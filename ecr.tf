@@ -21,7 +21,7 @@ data "aws_iam_policy_document" "ecr_push_assume_role" {
     condition {
       test     = "StringLike"
       variable = "token.actions.githubusercontent.com:sub"
-      values = ["repo:bacchus-snu/*"]
+      values   = ["repo:bacchus-snu/*"]
     }
   }
 }
