@@ -59,4 +59,10 @@ resource "aws_iam_role" "ecr_push" {
 # List of registry
 ################################################################################
 
-# TODO
+resource "aws_ecr_repository" "id_core" {
+  name = "bacchus-id/core"
+}
+
+resource "aws_ecr_repository" "id_front" {
+  name = "bacchus-id/front"
+}
