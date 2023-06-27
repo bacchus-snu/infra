@@ -70,6 +70,11 @@ locals {
       is_admin        = true,
       console_enabled = true,
     },
+    "jangho" = {
+      pgp_key         = "keybase:jangho"
+      is_admin        = true,
+      console_enabled = true,
+    },
     "terraform-cloud" = {
       pgp_key         = "",
       is_admin        = true,
