@@ -59,7 +59,7 @@ resource "aws_security_group" "bacchus_practice" {
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
-    
+
   ingress {
     description = "Allow 8000-8199 for docker practice"
     from_port   = 8000
