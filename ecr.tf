@@ -39,7 +39,6 @@ data "aws_iam_policy_document" "ecr_push_inline_policy" {
       "ecr:PutImage",
       "ecr:UploadLayerPart",
 
-
       "ecr-public:PutImage",
       "ecr-public:InitiateLayerUpload",
       "ecr-public:UploadLayerPart",
