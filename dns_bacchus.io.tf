@@ -27,7 +27,7 @@ resource "cloudflare_record" "bacchus_vpn_kr" {
 resource "cloudflare_record" "bacchus_ghtxt" {
   zone_id = cloudflare_zone.bacchus.id
   name    = "_github-pages-challenge-bacchus-snu"
-  value   = "7b9f5a46f00083087748e0dec86020"
+  value   = "24840067c4e087c4402adc898013cd"
   type    = "TXT"
 }
 
