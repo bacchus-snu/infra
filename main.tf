@@ -27,5 +27,4 @@ provider "aws" {
 }
 
 provider "cloudflare" {
-
 }
