@@ -16,14 +16,6 @@ resource "cloudflare_record" "bacchus_horoyoi" {
   type  = "A"
 }
 
-resource "cloudflare_record" "bacchus_vpn_kr" {
-  zone_id = cloudflare_zone.bacchus.id
-
-  name  = "kr.vpn"
-  value = aws_eip.bacchus_vpn_kr.public_ip
-  type  = "A"
-}
-
 resource "cloudflare_record" "bacchus_ghtxt" {
   zone_id = cloudflare_zone.bacchus.id
   name    = "_github-pages-challenge-bacchus-snu"
