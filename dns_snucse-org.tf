@@ -21,11 +21,6 @@ locals {
 
     # gh pages
     {
-      name  = "bacchus"
-      type  = "CNAME"
-      value = "bacchus-snu.github.io"
-    },
-    {
       name  = "gpu"
       type  = "CNAME"
       value = "bacchus-snu.github.io"
@@ -71,4 +66,22 @@ resource "cloudflare_record" "snucse_records" {
   name  = each.value.name
   type  = each.value.type
   value = each.value.value
+}
+
+# bacchus.snucse.org cannot be CNAME due to other RRTYPEs (e.g., MX) on the same name.
+resource "cloudflare_record" "snucse_bacchus" {
+  for_each = toset([
+    # bacchus-snu.github.io.
+    "185.199.108.153",
+    "185.199.109.153",
+    "185.199.110.153",
+    "185.199.111.153",
+  ])
+
+  zone_id = cloudflare_zone.snucse.id
+  comment = "managed by Terraform"
+
+  name  = "bacchus"
+  type  = "A"
+  value = each.value
 }
