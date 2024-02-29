@@ -36,7 +36,7 @@ locals {
     skyy    = "147.46.242.84"
 
     # misc virtual hosts
-    kerkoporta = "147.46.92.174"
+    kerkoporta = "147.46.78.164"
     www        = "147.46.240.41"
 
     # 2024-spring classes
