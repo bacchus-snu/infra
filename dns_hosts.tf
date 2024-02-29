@@ -36,7 +36,6 @@ locals {
     skyy    = "147.46.242.84"
 
     # misc virtual hosts
-    id         = "147.46.78.164"
     kerkoporta = "147.46.92.174"
     www        = "147.46.240.41"
 
