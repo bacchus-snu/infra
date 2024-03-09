@@ -49,6 +49,13 @@ locals {
       type  = "CNAME"
       value = "ferrari.snucse.org"
     },
+
+    # sommelier cluster
+    {
+      name  = "sommelier"
+      type  = "CNAME"
+      value = "kerkoporta.snucse.org"
+    },
   ]
 }
 
