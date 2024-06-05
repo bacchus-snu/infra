@@ -25,6 +25,11 @@ locals {
       type  = "CNAME"
       value = "bacchus-snu.github.io"
     },
+    {
+      name  = "sgs-docs"
+      type  = "CNAME"
+      value = "bacchus-snu.github.io"
+    },
 
     # package mirror and repo
     {
