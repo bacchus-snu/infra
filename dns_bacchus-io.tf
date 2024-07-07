@@ -25,13 +25,6 @@ locals {
       type  = "A"
       value = "147.46.242.210"
     },
-
-    # practice server
-    {
-      name = "junebug"
-      type = "A"
-      value = "10.89.0.51"
-    },
   ]
 }
 
