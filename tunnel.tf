@@ -16,7 +16,7 @@ resource "cloudflare_tunnel_config" "webhook" {
   config {
     ingress_rule {
       hostname = "argocd-webhook.bacchus.io"
-      path     = "/api/webhook"
+      path     = "api/webhook"
       service  = "https://argocd.bacchus.io"
       origin_request {
         http_host_header = "argocd.bacchus.io"
