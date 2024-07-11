@@ -19,6 +19,14 @@ locals {
       value = "kerkoporta.snucse.org"
     },
 
+    # route argocd-webhook through tunnel
+    {
+      name = "argocd-webhook"
+      type = "CNAME"
+      value = cloudflare_tunnel.webhook.cname
+      proxied = true
+    },
+
     # waffle development server
     {
       name  = "cse-dev-waffle"
@@ -42,4 +50,6 @@ resource "cloudflare_record" "bacchus_records" {
   name  = each.value.name
   type  = each.value.type
   value = each.value.value
+
+  proxied = lookup(each.value, "proxied", false)
 }
