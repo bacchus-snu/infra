@@ -37,11 +37,6 @@ locals {
       type  = "CNAME"
       value = "blanc.snucse.org"
     },
-    {
-      name  = "mirror"
-      type  = "CNAME"
-      value = "blanc.snucse.org"
-    },
 
     # GPU image registries
     {
