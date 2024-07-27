@@ -31,13 +31,6 @@ locals {
       value = "bacchus-snu.github.io"
     },
 
-    # package mirror and repo
-    {
-      name  = "repo"
-      type  = "CNAME"
-      value = "blanc.snucse.org"
-    },
-
     # GPU image registries
     {
       name  = "registry.bentley"
