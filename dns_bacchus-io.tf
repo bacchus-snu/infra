@@ -18,7 +18,11 @@ locals {
       type  = "CNAME"
       value = "kerkoporta.snucse.org"
     },
-
+    {
+      name  = "web_gateway"
+      type  = "CNAME"
+      value = "kerkoporta.snucse.org"
+    },
     # route argocd-webhook through tunnel
     {
       name = "argocd-webhook"
