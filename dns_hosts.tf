@@ -10,8 +10,6 @@ locals {
     faust   = "147.46.240.144"
 
     # new GPU
-    bentley        = "147.46.92.213"
-    "ipmi.bentley" = "147.46.92.112"
     ferrari        = "147.46.15.75"
     "ipmi.ferrari" = "147.46.15.76"
 
