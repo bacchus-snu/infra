@@ -2,52 +2,52 @@ locals {
   dns_snucse-org = [
     # github site verification
     {
-      name  = "_github-pages-challenge-bacchus-snu"
-      type  = "TXT"
-      value = "7b9f5a46f00083087748e0dec86020"
+      name    = "_github-pages-challenge-bacchus-snu"
+      type    = "TXT"
+      content = "7b9f5a46f00083087748e0dec86020"
     },
 
     # SNUCSE
     {
-      name  = "snucse.org"
-      type  = "CNAME"
-      value = "www.snucse.org"
+      name    = "snucse.org"
+      type    = "CNAME"
+      content = "www.snucse.org"
     },
     {
-      name  = "*"
-      type  = "CNAME"
-      value = "mimosa.snucse.org"
+      name    = "*"
+      type    = "CNAME"
+      content = "mimosa.snucse.org"
     },
 
     # gh pages
     {
-      name  = "gpu"
-      type  = "CNAME"
-      value = "bacchus-snu.github.io"
+      name    = "gpu"
+      type    = "CNAME"
+      content = "bacchus-snu.github.io"
     },
     {
-      name  = "sgs-docs"
-      type  = "CNAME"
-      value = "bacchus-snu.github.io"
+      name    = "sgs-docs"
+      type    = "CNAME"
+      content = "bacchus-snu.github.io"
     },
 
     # GPU image registries
     {
-      name  = "registry.bentley"
-      type  = "CNAME"
-      value = "bentley.snucse.org"
+      name    = "registry.bentley"
+      type    = "CNAME"
+      content = "bentley.snucse.org"
     },
     {
-      name  = "registry.ferrari"
-      type  = "CNAME"
-      value = "ferrari.snucse.org"
+      name    = "registry.ferrari"
+      type    = "CNAME"
+      content = "ferrari.snucse.org"
     },
 
     # sommelier cluster
     {
-      name  = "sommelier"
-      type  = "CNAME"
-      value = "kerkoporta.snucse.org"
+      name    = "sommelier"
+      type    = "CNAME"
+      content = "kerkoporta.snucse.org"
     },
   ]
 }
@@ -63,9 +63,9 @@ resource "cloudflare_record" "snucse_records" {
   zone_id = cloudflare_zone.snucse.id
   comment = "managed by Terraform"
 
-  name  = each.value.name
-  type  = each.value.type
-  value = each.value.value
+  name    = each.value.name
+  type    = each.value.type
+  content = each.value.content
 }
 
 # bacchus.snucse.org cannot be CNAME due to other RRTYPEs (e.g., MX) on the same name.
@@ -81,7 +81,7 @@ resource "cloudflare_record" "snucse_bacchus" {
   zone_id = cloudflare_zone.snucse.id
   comment = "managed by Terraform"
 
-  name  = "bacchus"
-  type  = "A"
-  value = each.value
+  name    = "bacchus"
+  type    = "A"
+  content = each.value
 }
