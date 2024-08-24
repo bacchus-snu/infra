@@ -47,7 +47,7 @@ resource "cloudflare_record" "dns_hosts" {
   zone_id = cloudflare_zone.snucse.id
   comment = "managed by Terraform"
 
-  name  = each.key
-  type  = "A"
-  value = each.value
+  name    = each.key
+  type    = "A"
+  content = each.value
 }

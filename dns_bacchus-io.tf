@@ -2,40 +2,40 @@ locals {
   dns_bacchus-io = [
     # github site verification
     {
-      name  = "_github-pages-challenge-bacchus-snu"
-      type  = "TXT"
-      value = "24840067c4e087c4402adc898013cd"
+      name    = "_github-pages-challenge-bacchus-snu"
+      type    = "TXT"
+      content = "24840067c4e087c4402adc898013cd"
     },
 
     # alias
     {
-      name  = "horoyoi"
-      type  = "CNAME"
-      value = "horoyoi.snucse.org"
+      name    = "horoyoi"
+      type    = "CNAME"
+      content = "horoyoi.snucse.org"
     },
     {
-      name  = "waiter"
-      type  = "CNAME"
-      value = "kerkoporta.snucse.org"
+      name    = "waiter"
+      type    = "CNAME"
+      content = "kerkoporta.snucse.org"
     },
     {
-      name  = "web_gateway"
-      type  = "CNAME"
-      value = "kerkoporta.snucse.org"
+      name    = "web_gateway"
+      type    = "CNAME"
+      content = "kerkoporta.snucse.org"
     },
     # route argocd-webhook through tunnel
     {
-      name = "argocd-webhook"
-      type = "CNAME"
-      value = cloudflare_tunnel.webhook.cname
+      name    = "argocd-webhook"
+      type    = "CNAME"
+      content = cloudflare_tunnel.webhook.cname
       proxied = true
     },
 
     # waffle development server
     {
-      name  = "cse-dev-waffle"
-      type  = "A"
-      value = "147.46.242.210"
+      name    = "cse-dev-waffle"
+      type    = "A"
+      content = "147.46.242.210"
     },
   ]
 }
@@ -51,9 +51,9 @@ resource "cloudflare_record" "bacchus_records" {
   zone_id = cloudflare_zone.bacchus.id
   comment = "managed by Terraform"
 
-  name  = each.value.name
-  type  = each.value.type
-  value = each.value.value
+  name    = each.value.name
+  type    = each.value.type
+  content = each.value.content
 
   proxied = lookup(each.value, "proxied", false)
 }
