@@ -7,18 +7,6 @@ locals {
       content = "7b9f5a46f00083087748e0dec86020"
     },
 
-    # SNUCSE
-    {
-      name    = "snucse.org"
-      type    = "CNAME"
-      content = "www.snucse.org"
-    },
-    {
-      name    = "*"
-      type    = "CNAME"
-      content = "mimosa.snucse.org"
-    },
-
     # gh pages
     {
       name    = "gpu"
