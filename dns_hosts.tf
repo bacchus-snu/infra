@@ -35,7 +35,6 @@ locals {
 
     # misc virtual hosts
     kerkoporta = "147.46.92.174"
-    www        = "147.46.240.41"
   }
 }
 
