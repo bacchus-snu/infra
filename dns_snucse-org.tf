@@ -35,7 +35,7 @@ locals {
 
     # apex CNAME, gets flattened by Cloudflare
     {
-      name    = ""
+      name    = "@"
       type    = "CNAME"
       content = "web_gateway.bacchus.io"
     },
