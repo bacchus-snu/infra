@@ -27,7 +27,7 @@ locals {
     {
       name    = "argocd-webhook"
       type    = "CNAME"
-      content = cloudflare_tunnel.webhook.cname
+      content = cloudflare_zero_trust_tunnel_cloudflared.webhook.cname
       proxied = true
     },
 
