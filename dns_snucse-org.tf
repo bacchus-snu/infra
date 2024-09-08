@@ -21,11 +21,6 @@ locals {
 
     # GPU image registries
     {
-      name    = "registry.bentley"
-      type    = "CNAME"
-      content = "bentley.snucse.org"
-    },
-    {
       name    = "registry.ferrari"
       type    = "CNAME"
       content = "ferrari.snucse.org"
@@ -36,6 +31,13 @@ locals {
       name    = "sommelier"
       type    = "CNAME"
       content = "kerkoporta.snucse.org"
+    },
+
+    # apex CNAME, gets flattened by Cloudflare
+    {
+      name    = ""
+      type    = "CNAME"
+      content = "web_gateway.bacchus.io"
     },
   ]
 }
