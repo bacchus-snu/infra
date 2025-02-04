@@ -4,7 +4,7 @@ locals {
     {
       name    = "_github-pages-challenge-bacchus-snu"
       type    = "TXT"
-      content = "24840067c4e087c4402adc898013cd"
+      content = "\"24840067c4e087c4402adc898013cd\""
     },
 
     # alias
