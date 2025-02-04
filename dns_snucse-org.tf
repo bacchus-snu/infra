@@ -4,7 +4,7 @@ locals {
     {
       name    = "_github-pages-challenge-bacchus-snu"
       type    = "TXT"
-      content = "7b9f5a46f00083087748e0dec86020"
+      content = "\"7b9f5a46f00083087748e0dec86020\""
     },
 
     # gh pages
