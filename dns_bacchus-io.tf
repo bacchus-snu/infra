@@ -14,6 +14,11 @@ locals {
       content = "horoyoi.snucse.org"
     },
     {
+      name    = "genesis"
+      type    = "CNAME"
+      content = "genesis.snucse.org"
+    },
+    {
       name    = "waiter"
       type    = "CNAME"
       content = "kerkoporta.snucse.org"
