@@ -40,7 +40,7 @@ locals {
     {
       name    = "cse-dev-waffle"
       type    = "A"
-      content = "147.46.242.210"
+      content = "147.46.92.237"
     },
   ]
 }
