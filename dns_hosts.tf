@@ -25,7 +25,7 @@ locals {
 
     # misc physical hosts
     blanc   = "147.46.242.187"
-    horoyoi = "147.46.113.120"
+    horoyoi = "147.46.127.36"
     genesis = "147.46.113.87"
     joker   = "147.46.242.183"
     martini = "147.46.240.44"
