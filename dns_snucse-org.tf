@@ -19,6 +19,13 @@ locals {
       content = "bacchus-snu.github.io"
     },
 
+    # guardian
+    {
+      name    = "guardian"
+      type    = "CNAME"
+      content = "snu-guardian.github.io"
+    },
+
     # GPU image registries
     {
       name    = "registry.ferrari"
