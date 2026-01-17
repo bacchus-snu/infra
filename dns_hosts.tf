@@ -1,6 +1,9 @@
 locals {
   # canonical host-addres mappings
   dns_hosts = {
+    # sgs dev environment (soju)
+    cocktail = "147.46.240.85"
+
     # legacy GPU
     asahi   = "147.46.240.213"
     bernini = "147.46.240.245"
