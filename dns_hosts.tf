@@ -17,7 +17,8 @@ locals {
     "ipmi.ferrari" = "147.46.15.76"
 
     # legacy cluster
-    glennfidich = "147.46.242.227"
+    # glennfidich = "147.46.242.227"
+    sp = "147.46.242.227"
     jackdaniels = "147.46.242.203"
     rum         = "147.46.242.138"
 
