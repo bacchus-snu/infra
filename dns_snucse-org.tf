@@ -18,6 +18,11 @@ locals {
       type    = "CNAME"
       content = "bacchus-snu.github.io"
     },
+    {
+      name    = "docs.cloud"
+      type    = "CNAME"
+      content = "bacchus-snu.github.io"
+    },
 
     # guardian
     {
