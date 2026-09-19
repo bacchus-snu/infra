@@ -87,3 +87,18 @@ resource "cloudflare_record" "snucse_bacchus" {
   type    = "A"
   content = each.value
 }
+
+resource "cloudflare_record" "snucse_zest" {
+  for_each = toset([
+    "147.46.91.26",
+    "147.46.91.46",
+    "147.46.91.49",
+  ])
+
+  zone_id = cloudflare_zone.snucse.id
+  comment = "managed by Terraform"
+
+  name    = "zest"
+  type    = "A"
+  content = each.value
+}
