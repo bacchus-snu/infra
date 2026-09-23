@@ -40,9 +40,6 @@ locals {
     sherry  = "147.46.78.91"
     skyy    = "147.46.242.84"
 
-    # misc virtual hosts
-    kerkoporta = "147.46.92.174"
-
     # 2025-fall classes
     nw01 = "147.46.92.109"
     nw02 = "147.46.92.112"

@@ -38,13 +38,6 @@ locals {
       content = "ferrari.snucse.org"
     },
 
-    # sommelier cluster
-    {
-      name    = "sommelier"
-      type    = "CNAME"
-      content = "kerkoporta.snucse.org"
-    },
-
     # apex CNAME, gets flattened by Cloudflare
     {
       name    = "@"

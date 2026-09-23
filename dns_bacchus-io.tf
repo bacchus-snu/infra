@@ -19,14 +19,9 @@ locals {
       content = "genesis.snucse.org"
     },
     {
-      name    = "waiter"
-      type    = "CNAME"
-      content = "kerkoporta.snucse.org"
-    },
-    {
       name    = "web_gateway"
-      type    = "CNAME"
-      content = "kerkoporta.snucse.org"
+      type    = "A"
+      content = "147.46.92.174"
     },
     # route argocd-webhook through tunnel
     {
