@@ -4,7 +4,7 @@ locals {
     {
       name    = "_github-pages-challenge-bacchus-snu"
       type    = "TXT"
-      content = "7b9f5a46f00083087748e0dec86020"
+      content = "\"7b9f5a46f00083087748e0dec86020\""
     },
 
     # gh pages
@@ -18,19 +18,24 @@ locals {
       type    = "CNAME"
       content = "bacchus-snu.github.io"
     },
+    {
+      name    = "docs.cloud"
+      type    = "CNAME"
+      content = "bacchus-snu.github.io"
+    },
+
+    # guardian
+    {
+      name    = "guardian"
+      type    = "CNAME"
+      content = "snu-guardian.github.io"
+    },
 
     # GPU image registries
     {
       name    = "registry.ferrari"
       type    = "CNAME"
       content = "ferrari.snucse.org"
-    },
-
-    # sommelier cluster
-    {
-      name    = "sommelier"
-      type    = "CNAME"
-      content = "kerkoporta.snucse.org"
     },
 
     # apex CNAME, gets flattened by Cloudflare
@@ -72,6 +77,21 @@ resource "cloudflare_record" "snucse_bacchus" {
   comment = "managed by Terraform"
 
   name    = "bacchus"
+  type    = "A"
+  content = each.value
+}
+
+resource "cloudflare_record" "snucse_zest" {
+  for_each = toset([
+    "147.46.91.26",
+    "147.46.91.46",
+    "147.46.91.49",
+  ])
+
+  zone_id = cloudflare_zone.snucse.id
+  comment = "managed by Terraform"
+
+  name    = "zest"
   type    = "A"
   content = each.value
 }

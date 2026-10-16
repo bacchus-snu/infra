@@ -4,7 +4,7 @@ locals {
     {
       name    = "_github-pages-challenge-bacchus-snu"
       type    = "TXT"
-      content = "24840067c4e087c4402adc898013cd"
+      content = "\"24840067c4e087c4402adc898013cd\""
     },
 
     # alias
@@ -14,14 +14,14 @@ locals {
       content = "horoyoi.snucse.org"
     },
     {
-      name    = "waiter"
+      name    = "genesis"
       type    = "CNAME"
-      content = "kerkoporta.snucse.org"
+      content = "genesis.snucse.org"
     },
     {
       name    = "web_gateway"
-      type    = "CNAME"
-      content = "kerkoporta.snucse.org"
+      type    = "A"
+      content = "147.46.92.174"
     },
     # route argocd-webhook through tunnel
     {
@@ -35,7 +35,7 @@ locals {
     {
       name    = "cse-dev-waffle"
       type    = "A"
-      content = "147.46.242.210"
+      content = "147.46.92.237"
     },
   ]
 }
@@ -56,4 +56,19 @@ resource "cloudflare_record" "bacchus_records" {
   content = each.value.content
 
   proxied = lookup(each.value, "proxied", false)
+}
+
+resource "cloudflare_record" "bacchus_atrium" {
+  for_each = toset([
+    "147.46.92.109",
+    "147.46.91.43",
+    "147.46.92.116",
+  ])
+
+  zone_id = cloudflare_zone.bacchus.id
+  comment = "managed by Terraform"
+
+  name    = "atrium"
+  type    = "A"
+  content = each.value
 }
