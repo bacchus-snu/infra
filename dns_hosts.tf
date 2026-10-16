@@ -15,6 +15,7 @@ locals {
     # new GPU
     ferrari        = "147.46.15.75"
     "ipmi.ferrari" = "147.46.15.76"
+    ford           = "147.46.91.242"
 
     # legacy cluster
     # glennfidich = "147.46.242.227"
