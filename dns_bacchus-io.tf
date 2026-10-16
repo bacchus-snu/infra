@@ -57,3 +57,18 @@ resource "cloudflare_record" "bacchus_records" {
 
   proxied = lookup(each.value, "proxied", false)
 }
+
+resource "cloudflare_record" "bacchus_atrium" {
+  for_each = toset([
+    "147.46.92.109",
+    "147.46.91.43",
+    "147.46.92.116",
+  ])
+
+  zone_id = cloudflare_zone.bacchus.id
+  comment = "managed by Terraform"
+
+  name    = "atrium"
+  type    = "A"
+  content = each.value
+}
