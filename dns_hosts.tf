@@ -43,11 +43,12 @@ locals {
   }
 }
 
-resource "cloudflare_record" "dns_hosts" {
+resource "cloudflare_dns_record" "dns_hosts" {
   for_each = local.dns_hosts
 
   zone_id = cloudflare_zone.snucse.id
   comment = "managed by Terraform"
+  ttl     = 1
 
   name    = each.key
   type    = "A"
