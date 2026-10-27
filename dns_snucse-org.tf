@@ -48,15 +48,18 @@ locals {
 }
 
 resource "cloudflare_zone" "snucse" {
-  account_id = "9d0fe600126436ae84ee3f9ed2f60a9c"
-  zone       = "snucse.org"
+  account = {
+    id = "9d0fe600126436ae84ee3f9ed2f60a9c"
+  }
+  name = "snucse.org"
 }
 
-resource "cloudflare_record" "snucse_records" {
+resource "cloudflare_dns_record" "snucse_records" {
   for_each = { for r in local.dns_snucse-org : "${r.name}_${r.type}" => r }
 
   zone_id = cloudflare_zone.snucse.id
   comment = "managed by Terraform"
+  ttl     = 1
 
   name    = each.value.name
   type    = each.value.type
@@ -64,7 +67,7 @@ resource "cloudflare_record" "snucse_records" {
 }
 
 # bacchus.snucse.org cannot be CNAME due to other RRTYPEs (e.g., MX) on the same name.
-resource "cloudflare_record" "snucse_bacchus" {
+resource "cloudflare_dns_record" "snucse_bacchus" {
   for_each = toset([
     # bacchus-snu.github.io.
     "185.199.108.153",
@@ -75,13 +78,14 @@ resource "cloudflare_record" "snucse_bacchus" {
 
   zone_id = cloudflare_zone.snucse.id
   comment = "managed by Terraform"
+  ttl     = 1
 
   name    = "bacchus"
   type    = "A"
   content = each.value
 }
 
-resource "cloudflare_record" "snucse_zest" {
+resource "cloudflare_dns_record" "snucse_zest" {
   for_each = toset([
     "147.46.91.26",
     "147.46.91.46",
@@ -90,6 +94,7 @@ resource "cloudflare_record" "snucse_zest" {
 
   zone_id = cloudflare_zone.snucse.id
   comment = "managed by Terraform"
+  ttl     = 1
 
   name    = "zest"
   type    = "A"

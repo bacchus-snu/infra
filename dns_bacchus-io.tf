@@ -27,7 +27,7 @@ locals {
     {
       name    = "argocd-webhook"
       type    = "CNAME"
-      content = cloudflare_zero_trust_tunnel_cloudflared.webhook.cname
+      content = "${cloudflare_zero_trust_tunnel_cloudflared.webhook.id}.cfargotunnel.com"
       proxied = true
     },
 
@@ -41,15 +41,18 @@ locals {
 }
 
 resource "cloudflare_zone" "bacchus" {
-  account_id = "9d0fe600126436ae84ee3f9ed2f60a9c"
-  zone       = "bacchus.io"
+  account = {
+    id = "9d0fe600126436ae84ee3f9ed2f60a9c"
+  }
+  name = "bacchus.io"
 }
 
-resource "cloudflare_record" "bacchus_records" {
+resource "cloudflare_dns_record" "bacchus_records" {
   for_each = { for r in local.dns_bacchus-io : "${r.name}_${r.type}" => r }
 
   zone_id = cloudflare_zone.bacchus.id
   comment = "managed by Terraform"
+  ttl     = 1
 
   name    = each.value.name
   type    = each.value.type
@@ -58,7 +61,7 @@ resource "cloudflare_record" "bacchus_records" {
   proxied = lookup(each.value, "proxied", false)
 }
 
-resource "cloudflare_record" "bacchus_atrium" {
+resource "cloudflare_dns_record" "bacchus_atrium" {
   for_each = toset([
     "147.46.92.109",
     "147.46.91.43",
@@ -67,6 +70,7 @@ resource "cloudflare_record" "bacchus_atrium" {
 
   zone_id = cloudflare_zone.bacchus.id
   comment = "managed by Terraform"
+  ttl     = 1
 
   name    = "atrium"
   type    = "A"
